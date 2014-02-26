@@ -1,6 +1,7 @@
 import re
 import numpy as np
 
+aminoacids = ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS', 'LEU', 'MET', 'ASN', 'PRO', 'GLN', 'ARG', 'SER', 'THR', 'VAL', 'TRP', 'TYR']
 
 class ResidueEnergies(object):
 
@@ -9,7 +10,11 @@ class ResidueEnergies(object):
         for item in line_string_list[1:]:
             item = float(item)
         self.res_type = line_string[0:3]
-        self.score_dict = dict(zip(score_term_list[1:], line_string_list[1:]))
+        self.score_dict = {}
+        st_counter = 1
+        while st_counter < len(score_term_list):
+            self.score_dict[score_term_list[st_counter]] = line_string_list[st_counter]
+            st_counter += 1
 
     def get_value( self, score_term):
         return float(self.score_dict.get(score_term))
@@ -22,10 +27,15 @@ class ResidueEnergies(object):
 class ResTypeAverageScores(object):
 
     def __init__( self, residue_type, score_term_list):
-        initial_entries = [[]]* (len(score_term_list) -1)
-        self.res_type_all_score_dict = dict( zip( score_term_list[1:], initial_entries))
+        self.res_type_all_score_dict = {}
+        st_counter = 1
+        while st_counter < len( score_term_list):
+            self.res_type_all_score_dict[score_term_list[st_counter]] = []
+            st_counter += 1
+
         self.res_type = residue_type
         self.num_entries = 0
+    
 
     def add_residue_energies(self,  ResidueEnergies_instance):
         if self.res_type != ResidueEnergies_instance.get_res_type():
@@ -34,7 +44,7 @@ class ResTypeAverageScores(object):
 
         self.num_entries += 1
         for score_term in self.res_type_all_score_dict.keys():
-            self.res_type_all_score_dict[score_term].append( ResidueEnergies_instance.get_value( score_term) )
+            self.res_type_all_score_dict[score_term].append( ResidueEnergies_instance.get_value(score_term) )
 
     def get_mean_val(self, score_term):
         return np.mean( self.res_type_all_score_dict[score_term] )
@@ -52,7 +62,6 @@ class PoseEnergies(object):
 
     def initalize_restype_av_scores( self, score_term_list):
         self.restype_av_scores = {}
-        aminoacids = ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS', 'LEU', 'MET', 'ASN', 'PRO', 'GLN', 'ARG', 'SER', 'THR', 'VAL', 'TRP', 'TYR']
         for aminoacid in aminoacids:
             self.restype_av_scores[aminoacid] = ResTypeAverageScores(aminoacid, score_term_list)
         
@@ -87,6 +96,7 @@ class PoseEnergies(object):
         cur_stddev = self.restype_av_scores[res_type].get_stddev(score_term)
         return (cur_mean, cur_stddev)
 
+
     #def get_score_term_value_for_residue( self, resnum, score_term): #resunm: position in sequence
         #return self.res_e_list[resnum - 1].get_value(score_term)
 
@@ -95,7 +105,7 @@ class PoseEnergies(object):
 
 
 pose_energies = PoseEnergies() # creates instance of PoseEnergies
-pose_energies.loadFile("../test/testpdb.txt")
+pose_energies.loadFile('../test/testpdb.txt')
 
 #print pose_energies.res_e_list[0].get_value('fa_atr') 
 #print pose_energies.get_score_term_value_for_residue(1, "fa_rep")
@@ -105,8 +115,23 @@ pose_energies.loadFile("../test/testpdb.txt")
 
 
 
-Ala_average_stddev = pose_energies.calculate_averages_and_stdevs("ALA", 'fa_atr')
-print Ala_average_stddev[0]
-print Ala_average_stddev[1]
-print Ala_average_stddev
+print pose_energies.calculate_averages_and_stdevs("CYS", 'fa_atr')
+print pose_energies.calculate_averages_and_stdevs("TRP", 'fa_sol')
 
+
+
+'''
+print pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm2')
+print pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm3')
+print pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm4')
+
+print pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm1')
+print pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm2')
+print pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm3')
+print pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm4')
+
+print pose_energies.calculate_averages_and_stdevs("MET", 'faketerm1')
+print pose_energies.calculate_averages_and_stdevs("MET", 'faketerm2')
+print pose_energies.calculate_averages_and_stdevs("MET", 'faketerm3')
+print pose_energies.calculate_averages_and_stdevs("MET", 'faketerm4')
+'''
