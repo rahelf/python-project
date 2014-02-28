@@ -1,5 +1,6 @@
 import numpy as np
 from operator import add
+import sys
 
 
 
@@ -44,8 +45,7 @@ class ResTypeAverageScores(object):
     def add_other_instance(self, other_instance):
         #1a. safety check whether other instance has same residue type
         if self.res_type != other_instance.res_type:
-            print "ERROR in function add_other_instance: ResTypeAverageScores instance to be added has different residue_type!"
-            sys.exit()
+            sys.exit("ERROR in function add_other_instance: ResTypeAverageScores instance to be added has different residue_type!")
         #in case we got initialized empty we simply copy everything and return
         if self.num_entries == 0: #means we got initialized empty
             self.score_term_list = other_instance.score_term_list
@@ -55,8 +55,7 @@ class ResTypeAverageScores(object):
             return
         #1b. safety check whether other instance has same score terms
         if self.score_term_list != other_instance.score_term_list:
-            print "ERROR in function add_other_instance: ResTypeAverageScores_instance to be added has different score_term_list!"
-            sys.exit()
+            sys.exit("ERROR in function add_other_instance: ResTypeAverageScores_instance to be added has different score_term_list!")
         #2. add num_entries and append lists, also append pdb identifier 
         #= ResTypeAverageScores_instance
         self.num_entries += other_instance.num_entries
@@ -67,8 +66,7 @@ class ResTypeAverageScores(object):
 
     def add_residue_energies(self,  ResidueEnergies_instance):
         if self.res_type != ResidueEnergies_instance.get_res_type():
-            print "ERROR in function add_residue_energies: score terms of ResidueEnergies_instance are added to wrong residue_type!"
-            sys.exit()
+            sys.exit("ERROR in function add_residue_energies: score terms of ResidueEnergies_instance are added to wrong residue_type!")
         self.num_entries += 1
         #print "adding residue energies to %s" % self.res_type
         #print self.res_type_all_score_dict

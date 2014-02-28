@@ -9,20 +9,21 @@ from ResTypesStatisticsCollector import ResTypesStatisticsCollector
 
 statistics_collector = ResTypesStatisticsCollector()
 
-pdbfile1 = "../test/avetest_mock.pdb"
-pdbfile2 = "../test/avetest_mock2.pdb"
+pdbfile1 = "../../pdbdir/132l_nohet_1_relax.pdb"
+pdbfile2 = "../../pdbdir/112l_nohet_1_relax.pdb"
 
 pe_instance_1 = PoseEnergies()
 pe_instance_1.loadFile( pdbfile1 )
-print pe_instance_1.score_term_list[1:]
-#print pe_instance_1.calculate_averages_and_stdevs('ALA', 'faketerm1')
-
 
 pe_instance_2 = PoseEnergies()
 pe_instance_2.loadFile( pdbfile2)
 
+
 statistics_collector.add_pose_energies( pe_instance_1)
 statistics_collector.add_pose_energies( pe_instance_2)
+
+print statistics_collector.calculate_averages_and_stdevs('ALA', 'fa_atr')
+
 
 #print pose_energies.res_e_list[0].get_value('fa_atr') 
 #print pose_energies.get_score_term_value_for_residue(1, "fa_rep")

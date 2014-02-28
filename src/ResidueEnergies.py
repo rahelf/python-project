@@ -1,6 +1,8 @@
 import re
 import numpy as np
+import sys
 from ResTypeAverageScores import ResTypeAverageScores
+
 
 aminoacids = ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS', 'LEU', 'MET', 'ASN', 'PRO', 'GLN', 'ARG', 'SER', 'THR', 'VAL', 'TRP', 'TYR']
 
@@ -17,6 +19,8 @@ class ResidueEnergies(object):
         while st_counter < len(score_term_list):
             self.score_dict[score_term_list[st_counter]] = line_string_list[st_counter]
             st_counter += 1
+        if len(line_string_list) != len(score_term_list):
+            sys.exit('At least one residue has a different amount of score term entries')
 
     def get_value( self, score_term):
         return float(self.score_dict.get(score_term))
@@ -58,12 +62,15 @@ class PoseEnergies(object):
         while current_line_no < end_read_line:
 
             current_line = lines[current_line_no]
+            if not current_line[0:3] in aminoacids:
+                self.res_e_list.pop()
+                break
             self.res_e_list.append( ResidueEnergies(current_line, self.score_term_list) )
             last_read_res = len( self.res_e_list) -1
             current_residue_type = self.res_e_list[last_read_res].get_res_type()
-            if current_residue_type == "VRT":
-                self.res_e_list.pop()
-                continue
+            #if current_residue_type == "VRT":
+            #   self.res_e_list.pop()
+            #   continue
             self.restype_av_scores[ current_residue_type ].add_residue_energies( self.res_e_list[ last_read_res ] )
             current_line_no += 1
 
