@@ -1,188 +1,76 @@
 #!/usr/bin/python
-from ResidueEnergies import ResidueEnergies, PoseEnergies
+import glob
+from ResidueEnergies import ResidueEnergies, PoseEnergies, aminoacids
 from ResTypeAverageScores import ResTypeAverageScores
 from ResTypesStatisticsCollector import ResTypesStatisticsCollector
+import cPickle
+import numpy as np
+import sys
 
+pdb_listfile = ""
+archive_listfile = ""
 
-#pose_energies = PoseEnergies() # creates instance of PoseEnergies
-#pose_energies.loadFile('../test/testpdb.txt')
-
-statistics_collector = ResTypesStatisticsCollector()
-
-pdbfile1 = "../../pdbdir/132l_nohet_1_relax.pdb"
-pdbfile2 = "../../pdbdir/112l_nohet_1_relax.pdb"
-
-pe_instance_1 = PoseEnergies()
-pe_instance_1.loadFile( pdbfile1 )
-
-pe_instance_2 = PoseEnergies()
-pe_instance_2.loadFile( pdbfile2)
-
-
-statistics_collector.add_pose_energies( pe_instance_1)
-statistics_collector.add_pose_energies( pe_instance_2)
-
-print statistics_collector.calculate_averages_and_stdevs('ALA', 'fa_atr')
-
-
-#print pose_energies.res_e_list[0].get_value('fa_atr') 
-#print pose_energies.get_score_term_value_for_residue(1, "fa_rep")
-#print pose_energies.get_number_of_residues('ALA')
-#print pose_energies.get_average('ALA', 'fa_atr')
-#print pose_energies.get_standard_deviation('ALA', 'fa_atr')
-
-
-'''
-for aa in aminoacids:
-    for score_term in pose_energies.score_term_list[1:]:
-        mean = str(pose_energies.calculate_averages_and_stdevs(aa, score_term)[0])
-        stdev = str(pose_energies.calculate_averages_and_stdevs(aa, score_term)[1])
-        print score_term.ljust(25), aa, mean.ljust(20), stdev.ljust(20)
-
-
-print pose_energies.calculate_averages_and_stdevs("ALA", 'fa_atr')
-print pose_energies.calculate_averages_and_stdevs("GLU", 'fa_sol')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class Atest(object):
-	def __init__(self, aval, bval):
-		self.aval = aval
-		self.bval = bval
-
-	def get_aval():
-		return self.aval
-
-	def get_bval():
-		return self.bval
-
-	def get_sum():
-		return self.aval + self.bval
-
-
-
-
-	first_instance = Atest(3,5)
-
-	print first_instance.get_sum()
-
-	second_instance = Atest(4,9)
-'''
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''
-
-FileList = []
-Listfile = ''
-template = ''
-outfile = ""
-Singlefile = ''
-listmode = 0
-external_template = 1
 
 CommandArgs = sys.argv[1:]
 
 for arg in CommandArgs:
-    if arg == '-t':
-        template = CommandArgs[CommandArgs.index(arg)+1]
-    elif arg == '-l':
-        Listfile = CommandArgs[CommandArgs.index(arg)+1]
+    if arg == '-pdbfiles':
+        pdb_listfile = CommandArgs[CommandArgs.index(arg)+1]
         listmode = 1
-    elif arg == '-out':
-        outfile = CommandArgs[CommandArgs.index(arg)+1]
-    elif arg == '-s':
-        Singlefile = CommandArgs[CommandArgs.index(arg)+1]
-    elif arg == '-add_pdb_suffix':
-        ADD_PDB_SUFFIX = 1
+    elif arg == '-archived':
+        archive_listfile = CommandArgs[CommandArgs.index(arg)+1]
 
-if( Listfile and not template ):
-    hurz = 2
+if not pdb_listfile:
+     sys.exit('Error, please supply name of listfile')
 
-elif( (not Listfile and not Singlefile) or (not template) ):
-     print 'Error, please supply name of the listfile, the resfile and the template'
-     sys.exit()
+inlist = open(pdb_listfile, 'r')
+liste = inlist.readlines()
+FileList = []
+for item in liste:
+    FileList.append(item.rstrip('\n'))
+inlist.close()
 
-
-if(listmode):
-    inlist = open(Listfile,'r')
-    FileList = inlist.readlines()
-    inlist.close()
-    if( not template ):
-        template = FileList[0].replace("\n","")
-        external_template = 0
-    if outfile == ' ':
-        outfile = Listfile + '.ana'
-    print "Checking structures for %s structures in %s to template %s" % (len(FileList), Listfile, template)
-
-else:
-    FileList.append(Singlefile)
-
-template_coords = {}
-
-if template != '':
-    template_coords = get_coordinates(template)
-
-seq_prof = SequenceProfile( template_coords, external_template )
-
-outstring = ""
-
-for struct in FileList:
-
-    struct_coords = get_coordinates(struct)
-
-    seq_prof.add_struct( struct_coords )
- 
-    #print mutstring
-
-outstring = seq_prof.get_outstring()
-pymutstring =  seq_prof.get_pymutstring()
-    #print outstring
+archive_list = []
+if archive_listfile !="":
+    archhandle = open(archive_listfile, 'r')
+    flines = archhandle.readlines()
+    archhandle.close()
+    for line in flines:
+        archive_list.append( line.rstrip('\n'))
 
 
-if outfile == "":
-    print outstring
-    print pymutstring
+statistics_collector_from_pdb = ResTypesStatisticsCollector()
+statistics_collector_from_archive = ResTypesStatisticsCollector()
 
-else:
-    outf = open(outfile,'w')
-    outf.write(outstring)
-    outf.close()
+for filename in FileList:
+    filename = '../../pdbdir/'+filename
+    pe_instance = PoseEnergies()
+    pe_instance.loadFile(filename)
+    statistics_collector_from_pdb.add_pose_energies(pe_instance)
 
+
+
+#Serialization
+for aminoacid in aminoacids:
+    statistics_collector_from_pdb.restype_av_scores[aminoacid].pickle_res_type_average_scores('../pickled-files/'+aminoacid+'.txt')
+
+#Deserialiazation
 '''
+for aminoacid in aminoacids:
+    filename = '../pickled-files/'+aminoacid + '.txt'
+    f = file(filename, 'rb')
+    loaded_object = cPickle.load(f)
+    statistics_collector_from_archive.add_archived_data( loaded_object)
+    f.close()
+    '''
+#deserialize archives
+for archive in archive_list:
+    f = file(archive, 'rb')
+    loaded_object = cPickle.load(f)
+    statistics_collector_from_archive.add_archived_data( loaded_object )
+    f.close()
+
+#Histograms
+statistics_collector_from_archive.restype_av_scores['GLU'].make_histogram_for_scoreterm('fa_rep')
+statistics_collector_from_archive.restype_av_scores['GLU'].make_histogram_for_scoreterm('fa_atr')
+statistics_collector_from_pdb.restype_av_scores['ASP'].make_histogram_for_scoreterm('rama')

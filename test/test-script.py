@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import cPickle
 import sys
 sys.path.append('../src')
 from ResidueEnergies import ResidueEnergies, PoseEnergies
@@ -93,5 +94,49 @@ else:
 	print "There was an error when calculating mean and standard deviation for multiple .pdb-files"
 
 
+######################################################################
+#test: serialization and deserialization:
+
+error3_seen = False
+
+statistics_collector_from_pdb = ResTypesStatisticsCollector()
+statistics_collector_from_archive = ResTypesStatisticsCollector()
 
 
+all_file_names = ["../test/avetest_mock.pdb", "../test/avetest_mock2.pdb"]
+
+for filename in all_file_names:
+    pe_instance = PoseEnergies()
+    pe_instance.loadFile(filename)
+    statistics_collector_from_pdb.add_pose_energies(pe_instance)
+
+
+for aminoacid in aminoacids:
+    statistics_collector_from_pdb.restype_av_scores[aminoacid].pickle_res_type_average_scores(aminoacid+'.txt')
+
+
+for aminoacid in aminoacids:
+    filename = aminoacid + '.txt'
+    f = file(filename, 'rb')
+    loaded_object = cPickle.load(f)
+    statistics_collector_from_archive.add_archived_data( loaded_object)
+    #archived_res_type_average_scores[aminoacid] = loaded_object
+    f.close()
+
+if not statistics_collector_from_pdb.calculate_averages_and_stdevs('GLU', 'faketerm1') == statistics_collector_from_archive.calculate_averages_and_stdevs('GLU', 'faketerm1'):
+	error3_seen = True
+elif not statistics_collector_from_pdb.calculate_averages_and_stdevs('ASP', 'faketerm1') == statistics_collector_from_archive.calculate_averages_and_stdevs('ASP', 'faketerm1'):
+	error3_seen = True
+elif not statistics_collector_from_pdb.calculate_averages_and_stdevs('MET', 'faketerm2') == statistics_collector_from_archive.calculate_averages_and_stdevs('MET', 'faketerm2'):
+	error3_seen = True
+#elif not statistics_collector_from_pdb.calculate_averages_and_stdevs('ALA', 'faketerm4') == statistics_collector_from_archive.calculate_averages_and_stdevs('ALA', 'faketerm4'):
+#	error3_seen = True
+
+
+
+
+
+if not error3_seen:
+	print 'No error in serialization or deserialization!'
+else:
+	print 'There is an error in serialization or deserialization!'

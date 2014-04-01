@@ -12,14 +12,15 @@ class ResTypesStatisticsCollector(object):
 	def add_pose_energies( self, PoseEnergies_instance):
 		for aminoacid in aminoacids:
 			self.restype_av_scores[aminoacid].add_other_instance( PoseEnergies_instance.get_rtas_for_restype(aminoacid) )
-			#print PoseEnergies_instance.get_rtas_for_restype(aminoacid)
-			#print self.restype_av_scores[aminoacids]
-			#rtas_other_instance = 
-			#add_other_instance(rtas_other_instance)
 
 
 	def calculate_averages_and_stdevs(self, res_type, score_term):
 		cur_mean = self.restype_av_scores[res_type].get_mean_val(score_term)
 		cur_stddev = self.restype_av_scores[res_type].get_stddev(score_term)
 		return (cur_mean, cur_stddev)
+		print cur_mean, cur_stddev
 		
+
+	def add_archived_data(self, archived_res_type_average_scores):
+		this_aa = archived_res_type_average_scores.res_type
+		self.restype_av_scores[this_aa].add_other_instance(archived_res_type_average_scores)

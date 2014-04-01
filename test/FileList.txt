@@ -1,2 +1,0 @@
-avetest_mock.pdb
-avetest_mock2.pdb

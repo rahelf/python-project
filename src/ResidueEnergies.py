@@ -62,9 +62,10 @@ class PoseEnergies(object):
         while current_line_no < end_read_line:
 
             current_line = lines[current_line_no]
+            current_line_no += 1
             if not current_line[0:3] in aminoacids:
                 self.res_e_list.pop()
-                break
+                continue
             self.res_e_list.append( ResidueEnergies(current_line, self.score_term_list) )
             last_read_res = len( self.res_e_list) -1
             current_residue_type = self.res_e_list[last_read_res].get_res_type()
@@ -72,7 +73,6 @@ class PoseEnergies(object):
             #   self.res_e_list.pop()
             #   continue
             self.restype_av_scores[ current_residue_type ].add_residue_energies( self.res_e_list[ last_read_res ] )
-            current_line_no += 1
 
     def calculate_averages_and_stdevs(self, res_type, score_term):
         cur_mean = self.restype_av_scores[res_type].get_mean_val(score_term)
