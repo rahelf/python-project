@@ -51,10 +51,10 @@ for filename in FileList:
     pe_instance.loadFile(filename)
     statistics_collector_from_pdb.add_pose_energies(pe_instance)
 
-#print 'GLU fa_atr:\n'
+
+#stddev and mean for subset
 #print 'SER with 10-20 neighbors:', statistics_collector_from_pdb.calculate_averages_and_stdevs_from_subset('SER', 'rama', range(10, 21))
-#print 'GLU with any number of neighbors:', statistics_collector_from_pdb.calculate_averages_and_stdevs_from_subset('GLU', 'fa_atr', number_of_neighbors_list)
-print 'SER with any number of neighbors (other method):', statistics_collector_from_pdb.calculate_averages_and_stdevs('SER', 'rama')
+#print 'SER with any number of neighbors (other method):', statistics_collector_from_pdb.calculate_averages_and_stdevs('SER', 'rama')
 
 
 
@@ -67,6 +67,12 @@ for archive in archive_list:
     f = file(archive, 'rb')
     statistics_collector_from_archive.add_archived_data( cPickle.load(f) )
     f.close()
+
+#best score terms
+aminoacid = 'ARG'
+score_term = 'fa_atr'
+print aminoacid, score_term
+print 'Best score is %s. \npdb-identfier of file: %s \nresidue number: %s' %statistics_collector_from_pdb.restype_av_scores[aminoacid].get_best_score(score_term)
 
 #Histograms
 #statistics_collector_from_archive.restype_av_scores['GLU'].make_histogram_for_scoreterm('fa_rep')

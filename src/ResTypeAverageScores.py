@@ -14,12 +14,15 @@ class ResTypeAverageScores(object):
 
     def __init__( self, residue_type, score_term_list, pdb_identifier):
         self.res_type_all_score_dict = {}
-        self.score_term_list = score_term_list
+        self.score_term_list = score_term_list[1:]
+        self.best_score_term_dict = {}
+        for score_term in self.score_term_list:
+            self.best_score_term_dict[score_term] = (10000, "", 0)
+        #print self.best_score_term_dict
         st_counter = 1
         while st_counter < len( score_term_list):
             self.res_type_all_score_dict[score_term_list[st_counter]] = {}
             for n in number_of_neighbors_list:
-                #print n
                 (self.res_type_all_score_dict[score_term_list[st_counter]])[number_of_neighbors_list[n]] = []
             st_counter += 1
         self.res_type = residue_type
@@ -40,6 +43,7 @@ class ResTypeAverageScores(object):
         return cls( residue_type, [], [])
 
     def add_other_instance(self, other_instance):
+        #print other_instance.best_score_term_dict['rama']
         #1a. safety check whether other instance has same residue type
         if self.res_type != other_instance.res_type:
             sys.exit("ERROR in function add_other_instance: ResTypeAverageScores instance to be added has different residue_type!")
@@ -49,6 +53,7 @@ class ResTypeAverageScores(object):
             self.num_entries = other_instance.num_entries
             self.pdb_identifier_list = other_instance.pdb_identifier_list
             self.res_type_all_score_dict = other_instance.res_type_all_score_dict
+            self.best_score_term_dict = other_instance.best_score_term_dict
             return
         #1b. safety check whether other instance has same score terms
         if self.score_term_list != other_instance.score_term_list:
@@ -62,10 +67,15 @@ class ResTypeAverageScores(object):
                 sys.exit('ERROR: pdb identifiers occur multiple times')
         self.pdb_identifier_list.extend(other_instance.pdb_identifier_list)
 
-        for scoreterm in self.score_term_list[1:]:
+        for scoreterm in self.score_term_list:
             for n in number_of_neighbors_list:
                 self.res_type_all_score_dict[scoreterm][n].extend(other_instance.res_type_all_score_dict[scoreterm][n])
 
+
+        for score_term in self.score_term_list:
+            #print other_instance.best_score_term_dict[score_term][0], self.best_score_term_dict[score_term][0]
+            if self.best_score_term_dict[score_term][0] > other_instance.best_score_term_dict[score_term][0]:
+                self.best_score_term_dict[score_term] = other_instance.best_score_term_dict[score_term]
 
 
     def add_residue_energies(self,  ResidueEnergies_instance):
@@ -79,7 +89,10 @@ class ResTypeAverageScores(object):
             which_neighbor = max_neighbor_count
         for score_term in self.res_type_all_score_dict.keys():
             self.res_type_all_score_dict[score_term][which_neighbor].append( ResidueEnergies_instance.get_value(score_term) )
-        #print "after adding"
+
+        for score_term in self.score_term_list:
+            if ResidueEnergies_instance.information_dict[score_term][0] < self.best_score_term_dict[score_term][0]:
+                self.best_score_term_dict[score_term] = ResidueEnergies_instance.information_dict[score_term]
 
 
     def get_merged_list_for_ncounts(self, score_term, nn_list):
@@ -95,6 +108,9 @@ class ResTypeAverageScores(object):
         for item in number_of_neighbors_list:
             merged_list += self.res_type_all_score_dict[score_term][item]
         return merged_list
+
+    def get_best_score(self, score_term):
+        return self.best_score_term_dict[score_term]
 
 
     def get_mean_val(self, score_term):

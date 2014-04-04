@@ -11,17 +11,22 @@ from constants import *
 
 class ResidueEnergies(object):
 
-    def __init__(self, line_string, score_term_list ):
+    def __init__(self, line_string, score_term_list, pdb_identifier ):
         line_string_list = line_string.split()
         for item in line_string_list[1:]:
             item = float(item)
         self.res_type = line_string[0:3]
-        self.res_num = line_string_list[0]
+        self.res_num = re.search('(\d+)', line_string_list[0]).group()
+        self.pdb_identifier = pdb_identifier
         self.score_dict = {}
+        self.information_dict = {}
         st_counter = 1
         while st_counter < len(score_term_list):
-            self.score_dict[score_term_list[st_counter]] = line_string_list[st_counter]
+            self.score_dict[score_term_list[st_counter]] = float(line_string_list[st_counter])
+            self.information_dict[score_term_list[st_counter]] = (float(line_string_list[st_counter]), self.pdb_identifier, self.res_num)
+            #print self.information_dict[score_term_list[st_counter]]
             st_counter += 1
+
         if len(line_string_list) != len(score_term_list):
             sys.exit('At least one residue has a different amount of score term entries')
         self.number_of_neighbors = 0
@@ -94,7 +99,7 @@ class PoseEnergies(object):
 
             if not (current_line[0:3] == calpha_list[all_res_counter].res_type ):
                 sys.exit('ERROR in file %s: residue type of c alpha atoms does not match residue type of ResidueEnergies' %self.pdb_identifier)
-            self.res_e_list.append( ResidueEnergies(current_line, self.score_term_list) )
+            self.res_e_list.append( ResidueEnergies(current_line, self.score_term_list, self.pdb_identifier) )
             last_read_res = len( self.res_e_list) -1
             current_residue_type = self.res_e_list[last_read_res].get_res_type()
             self.res_e_list[last_read_res].number_of_neighbors = calpha_list[all_res_counter].neighbor_counter
