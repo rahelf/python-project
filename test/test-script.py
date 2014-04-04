@@ -36,31 +36,31 @@ statistics_collector.add_pose_energies( pe_instance_2)
 error1_seen = False
 
 
-if pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm1')[1] != np.std([1, 1, 1]) or pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm1')[0] != np.mean([1, 1, 1]):
+if pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm1')[1] != np.std([1,1]) or pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm1')[0] != np.mean([1, 1]):
 	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm2')[1] != np.std([4, -4, 2]) or pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm2')[0] != np.mean([4, -4, 2]):
+elif pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm2')[1] != np.std([4, 2]) or pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm2')[0] != np.mean([4, 2]):
 	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm3')[1] != np.std([6, 6, 5]) or pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm3')[0] != np.mean([6, 6, 5]):
+elif pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm3')[1] != np.std([6, 5]) or pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm3')[0] != np.mean([6, 5]):
 	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm4')[1] != np.std([9, -10, 2]) or pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm4')[0] != np.mean([9, -10, 2]):
-	error1_seen = True
-
-elif pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm1')[1] != np.std([5, 5]) or pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm1')[0] != np.mean([5, 5]):
-	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm2')[1] != np.std([6, 3]) or pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm2')[0] != np.mean([6, 3]):
-	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm3')[1] != np.std([7, 6]) or pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm3')[0] != np.mean([7, 6]):
-	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm4')[1] != np.std([8, -8]) or pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm4')[0] != np.mean([8, -8]):
+elif pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm4')[1] != np.std([9, -10]) or pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm4')[0] != np.mean([9, -10]):
 	error1_seen = True
 
-elif pose_energies.calculate_averages_and_stdevs("MET", 'faketerm1')[1] != 0 or pose_energies.calculate_averages_and_stdevs("MET", 'faketerm1')[0] != 1:
+elif pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm1')[1] != np.std([5]) or pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm1')[0] != np.mean([5]):
 	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("MET", 'faketerm2')[1] != 0 or pose_energies.calculate_averages_and_stdevs("MET", 'faketerm2')[0] != 2:
+elif pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm2')[1] != np.std([6]) or pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm2')[0] != np.mean([6]):
 	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("MET", 'faketerm3')[1] != 0 or pose_energies.calculate_averages_and_stdevs("MET", 'faketerm3')[0] != 3:
+elif pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm3')[1] != np.std([7]) or pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm3')[0] != np.mean([7]):
 	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("MET", 'faketerm4')[1] != 0 or pose_energies.calculate_averages_and_stdevs("MET", 'faketerm4')[0] != 4:
+elif pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm4')[1] != np.std([8]) or pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm4')[0] != np.mean([8]):
+	error1_seen = True
+
+elif pose_energies.calculate_averages_and_stdevs("MET", 'faketerm1')[1] != np.std([1, 1]) or pose_energies.calculate_averages_and_stdevs("MET", 'faketerm1')[0] != np.mean([1, 1]):
+	error1_seen = True
+elif pose_energies.calculate_averages_and_stdevs("MET", 'faketerm2')[1] != np.std([2, -4]) or pose_energies.calculate_averages_and_stdevs("MET", 'faketerm2')[0] != np.mean([2, -4]):
+	error1_seen = True
+elif pose_energies.calculate_averages_and_stdevs("MET", 'faketerm3')[1] != np.std([3, 6]) or pose_energies.calculate_averages_and_stdevs("MET", 'faketerm3')[0] != np.mean([3, 6]):
+	error1_seen = True
+elif pose_energies.calculate_averages_and_stdevs("MET", 'faketerm4')[1] != np.std([4, 2]) or pose_energies.calculate_averages_and_stdevs("MET", 'faketerm4')[0] != np.mean([4, 2]):
 	error1_seen = True
 
 

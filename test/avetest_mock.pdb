@@ -64,7 +64,39 @@ ATOM     63  HD2 PHE A   4      48.708  27.583 104.784  1.00  0.00           H
 ATOM     64  HE1 PHE A   4      47.217  28.265 100.093  1.00  0.00           H  
 ATOM     65  HE2 PHE A   4      47.247  25.820 103.670  1.00  0.00           H  
 ATOM     66  HZ  PHE A   4      46.485  26.186 101.319  1.00  0.00           H  
-TER                                                                             
+ATOM     67  N   GLU A   5      48.134  29.893 106.496  1.00  0.00           N  
+ATOM     68  CA  GLU A   5      47.098  29.291 107.354  1.00  0.00           C  
+ATOM     69  C   GLU A   5      46.237  30.370 107.964  1.00  0.00           C  
+ATOM     70  O   GLU A   5      45.053  30.155 108.210  1.00  0.00           O  
+ATOM     71  CB  GLU A   5      47.707  28.358 108.446  1.00  0.00           C  
+ATOM     72  CG  GLU A   5      48.354  27.058 107.841  1.00  0.00           C  
+ATOM     73  CD  GLU A   5      47.282  26.066 107.262  1.00  0.00           C  
+ATOM     74  OE1 GLU A   5      47.624  25.137 106.498  1.00  0.00           O  
+ATOM     75  OE2 GLU A   5      46.085  26.216 107.571  1.00  0.00           O  
+ATOM     76  H   GLU A   5      49.103  29.827 106.775  1.00  0.00           H  
+ATOM     77  HA  GLU A   5      46.473  28.643 106.738  1.00  0.00           H  
+ATOM     78 1HB  GLU A   5      48.469  28.901 109.005  1.00  0.00           H  
+ATOM     79 2HB  GLU A   5      46.928  28.067 109.152  1.00  0.00           H  
+ATOM     80 1HG  GLU A   5      49.040  27.343 107.044  1.00  0.00           H  
+ATOM     81 2HG  GLU A   5      48.930  26.556 108.617  1.00  0.00           H  
+ATOM     82  N   MET A   6      46.810  31.538 108.212  1.00  0.00           N  
+ATOM     83  CA  MET A   6      45.964  32.593 108.788  1.00  0.00           C  
+ATOM     84  C   MET A   6      44.844  32.977 107.749  1.00  0.00           C  
+ATOM     85  O   MET A   6      43.714  33.198 108.102  1.00  0.00           O  
+ATOM     86  CB  MET A   6      46.766  33.851 109.077  1.00  0.00           C  
+ATOM     87  CG  MET A   6      45.812  35.013 109.463  1.00  0.00           C  
+ATOM     88  SD  MET A   6      46.648  36.620 109.814  1.00  0.00           S  
+ATOM     89  CE  MET A   6      47.461  37.040 108.124  1.00  0.00           C  
+ATOM     90  H   MET A   6      47.784  31.733 108.028  1.00  0.00           H  
+ATOM     91  HA  MET A   6      45.488  32.202 109.687  1.00  0.00           H  
+ATOM     92 1HB  MET A   6      47.467  33.657 109.887  1.00  0.00           H  
+ATOM     93 2HB  MET A   6      47.350  34.121 108.196  1.00  0.00           H  
+ATOM     94 1HG  MET A   6      45.104  35.186 108.653  1.00  0.00           H  
+ATOM     95 2HG  MET A   6      45.248  34.740 110.356  1.00  0.00           H  
+ATOM     96 1HE  MET A   6      47.996  37.986 108.204  1.00  0.00           H  
+ATOM     97 2HE  MET A   6      48.159  36.248 107.850  1.00  0.00           H  
+ATOM     98 3HE  MET A   6      46.688  37.123 107.360  1.00  0.00           H  
+TER
 # All scores below are weighted scores, not raw scores.
 #BEGIN_POSE_ENERGIES_TABLE 1j1u_mi_0001.pdb
 label faketerm1 faketerm2 faketerm3 faketerm4
@@ -73,7 +105,7 @@ pose -1216.71 135.679 663.257 2.70408
 MET_p:NtermProteinFull_1 1 2 3 4
 ASP_2 5 6 7 8
 GLU_3 1 4 5 9
-ASP_4 5 3 6 -8
+PHE_4 5 3 6 -8
 GLU_5 1 2 6 -10
-GLU_6 1 -4 6  2
+MET_6 1 -4 6  2
 #END_POSE_ENERGIES_TABLE 1j1u_mi_0001.pdb

@@ -1,4 +1,5 @@
 critical_distance_squared = 100
+#number_of_neighbors_list = range(0,41)
 
 class CalphaCoordinates(object):
 

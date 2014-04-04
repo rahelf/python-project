@@ -1,8 +1,10 @@
 #!/usr/bin/python
 import glob
-from ResidueEnergies import ResidueEnergies, PoseEnergies, aminoacids, critical_distance_squared
+from ResidueEnergies import ResidueEnergies, PoseEnergies,critical_distance_squared
 from ResTypeAverageScores import ResTypeAverageScores
 from ResTypesStatisticsCollector import ResTypesStatisticsCollector
+from constants import *
+
 import cPickle
 import numpy as np
 import sys
@@ -10,11 +12,8 @@ import sys
 pdb_listfile = ""
 archive_listfile = ""
 
-
-
-
+#Command Line Arguments
 CommandArgs = sys.argv[1:]
-
 for arg in CommandArgs:
     if arg == '-pdbfiles':
         pdb_listfile = CommandArgs[CommandArgs.index(arg)+1]
@@ -40,6 +39,9 @@ if archive_listfile !="":
     for line in flines:
         archive_list.append( line.rstrip('\n'))
 
+
+
+
 statistics_collector_from_pdb = ResTypesStatisticsCollector()
 statistics_collector_from_archive = ResTypesStatisticsCollector()
 
@@ -47,10 +49,12 @@ for filename in FileList:
     filename = '../../pdbdir/'+filename
     pe_instance = PoseEnergies()
     pe_instance.loadFile(filename)
-    print pe_instance.res_e_list[4].res_type, pe_instance.res_e_list[4].number_of_neighbors
-
     statistics_collector_from_pdb.add_pose_energies(pe_instance)
 
+#print 'GLU fa_atr:\n'
+#print 'SER with 10-20 neighbors:', statistics_collector_from_pdb.calculate_averages_and_stdevs_from_subset('SER', 'rama', range(10, 21))
+#print 'GLU with any number of neighbors:', statistics_collector_from_pdb.calculate_averages_and_stdevs_from_subset('GLU', 'fa_atr', number_of_neighbors_list)
+print 'SER with any number of neighbors (other method):', statistics_collector_from_pdb.calculate_averages_and_stdevs('SER', 'rama')
 
 
 
@@ -66,5 +70,9 @@ for archive in archive_list:
 
 #Histograms
 #statistics_collector_from_archive.restype_av_scores['GLU'].make_histogram_for_scoreterm('fa_rep')
-#statistics_collector_from_archive.restype_av_scores['GLU'].make_histogram_for_scoreterm('fa_atr')
-#statistics_collector_from_pdb.restype_av_scores['ASP'].make_histogram_for_scoreterm('rama')
+#statistics_collector_from_archive.restype_av_scores['GLU'].make_histogram_for_scoreterm_for_ncounts('fa_atr', range(0,41))
+#statistics_collector_from_pdb.restype_av_scores['GLU'].make_histogram_for_scoreterm_for_ncounts('fa_atr', range(0,41))
+
+#statistics_collector_from_pdb.restype_av_scores['GLU'].make_histogram_for_scoreterm_for_ncounts('fa_atr', range(0,12))
+#statistics_collector_from_pdb.restype_av_scores['GLU'].make_histogram_for_scoreterm_for_ncounts('fa_atr', range(20,41))
+

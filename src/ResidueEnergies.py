@@ -2,12 +2,11 @@ import re
 import numpy as np
 import sys
 from ResTypeAverageScores import ResTypeAverageScores
-from CalphaCoordinates import CalphaCoordinates
+from CalphaCoordinates import CalphaCoordinates, critical_distance_squared
+from constants import *
 
-critical_distance_squared = float(10)**2
-
-
-aminoacids = ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS', 'LEU', 'MET', 'ASN', 'PRO', 'GLN', 'ARG', 'SER', 'THR', 'VAL', 'TRP', 'TYR']
+#number_of_neighbors_list = range(0,41)
+#aminoacids = ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS', 'LEU', 'MET', 'ASN', 'PRO', 'GLN', 'ARG', 'SER', 'THR', 'VAL', 'TRP', 'TYR']
 
 
 class ResidueEnergies(object):
@@ -17,6 +16,7 @@ class ResidueEnergies(object):
         for item in line_string_list[1:]:
             item = float(item)
         self.res_type = line_string[0:3]
+        self.res_num = line_string_list[0]
         self.score_dict = {}
         st_counter = 1
         while st_counter < len(score_term_list):
@@ -32,6 +32,9 @@ class ResidueEnergies(object):
     def get_res_type(self):
        return self.res_type
 
+    def get_nneighbors(self):
+        return self.number_of_neighbors
+
 
 class PoseEnergies(object):
 
@@ -40,12 +43,10 @@ class PoseEnergies(object):
         calpha_list = []
         self.pdb_identifier = 0
 
-
     def initalize_restype_av_scores( self, score_term_list, pdb_identifier):
         self.restype_av_scores = {}
         for aminoacid in aminoacids:
             self.restype_av_scores[aminoacid] = ResTypeAverageScores(aminoacid, score_term_list, pdb_identifier)
-
         
     def loadFile(self, filename):
         self.res_e_list = [] #safety
@@ -58,9 +59,11 @@ class PoseEnergies(object):
 
         for i in range(len(lines)):
 
+            # read atom positions and instantiate CalphaCoordinates
             if lines[i].split()[0] == 'ATOM' and lines[i].split()[2] == 'CA' and lines[i].split()[3] in aminoacids:
                 calpha_list.append( CalphaCoordinates (lines[i].split()[3], lines[i].split()[5], float(lines[i].split()[6]), float(lines[i].split()[7]), float(lines[i].split()[8])))
 
+            #find beginning and end of amino acid score terms
             elif re.match('#BEGIN_POSE_ENERGIES_TABLE', lines[i]):
                 start_read_line = i+4
                 self.pdb_identifier = lines[i].split()[1][0:4]
@@ -68,13 +71,12 @@ class PoseEnergies(object):
                 end_read_line = i
 
 
-        #print critical_distance_squared
+        #neighbor calculation
         for calpha_1 in range(len(calpha_list)):
             for calpha_2 in range(calpha_1 + 1, len(calpha_list)):
                 calpha_list[calpha_1].are_neighbors(calpha_list[calpha_2], critical_distance_squared)
 
-        #make neighbor calculation here
-
+        #initialize ResTypeAverageScores
         current_line_no = start_read_line
         self.score_term_list = lines[start_read_line - 3].split()
         self.initalize_restype_av_scores(self.score_term_list, self.pdb_identifier)
@@ -83,11 +85,13 @@ class PoseEnergies(object):
 
             current_line = lines[current_line_no]
             current_line_no += 1
+            #do not add non-amino acids to res_e_list
             if not current_line[0:3] in aminoacids:
-                #self.res_e_list.pop()
+                #self.res_e_list.pop()r
                 #print "skipping non recognized res %s" % current_line[0:3]
                 all_res_counter += 1
                 continue
+
             if not (current_line[0:3] == calpha_list[all_res_counter].res_type ):
                 sys.exit('ERROR in file %s: residue type of c alpha atoms does not match residue type of ResidueEnergies' %self.pdb_identifier)
             self.res_e_list.append( ResidueEnergies(current_line, self.score_term_list) )
@@ -98,10 +102,6 @@ class PoseEnergies(object):
             self.restype_av_scores[ current_residue_type ].add_residue_energies( self.res_e_list[ last_read_res ] )
             #print "just added a res of type %s from line %s" %(current_residue_type, current_line_no-1)
             all_res_counter += 1
-
-        #consistency check ca vs score info
-        #print len(self.res_e_list), len(calpha_list)
-
 
 
     def calculate_averages_and_stdevs(self, res_type, score_term):
