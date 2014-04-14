@@ -46,7 +46,7 @@ statistics_collector_from_pdb = ResTypesStatisticsCollector()
 statistics_collector_from_archive = ResTypesStatisticsCollector()
 
 for filename in FileList:
-    filename = '../../pdbdir-more-files/'+filename
+    filename = '../../flo/scafdb'+filename
     pe_instance = PoseEnergies()
     pe_instance.loadFile(filename)
     statistics_collector_from_pdb.add_pose_energies(pe_instance)
@@ -56,7 +56,7 @@ for filename in FileList:
 
 #stddev and mean for subset
 
-print 'SER with 10-20 neighbors:\n', combined_score_term,'\n', statistics_collector_from_pdb.calculate_averages_and_stdevs_from_subset('SER', combined_score_term, range(10, 21))
+#print 'SER with 10-20 neighbors:\n', combined_score_term,'\n', statistics_collector_from_pdb.calculate_averages_and_stdevs_from_subset('SER', combined_score_term, range(10, 21))
 #print 'SER with any number of neighbors (other method):', statistics_collector_from_pdb.calculate_averages_and_stdevs('SER', 'rama')
 
 
