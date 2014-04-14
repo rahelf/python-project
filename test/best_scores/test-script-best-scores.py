@@ -39,7 +39,7 @@ for name in FileList_modified:
 #print statistics_collector_mod.restype_av_scores['GLY'].get_best_score('fa_rep')
 
 if float(statistics_collector_mod.restype_av_scores['GLY'].get_best_score('fa_rep')[0]) == -3.333333333:
-	print 'No error seen, when trying to find the best!'
+	print 'No error seen, when trying to find the best score!'
 else:
 	print 'ERROR when trying to find the best score for a specific amino acid and score term!'
 

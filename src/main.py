@@ -46,14 +46,17 @@ statistics_collector_from_pdb = ResTypesStatisticsCollector()
 statistics_collector_from_archive = ResTypesStatisticsCollector()
 
 for filename in FileList:
-    filename = '../../pdbdir/'+filename
+    filename = '../../pdbdir-more-files/'+filename
     pe_instance = PoseEnergies()
     pe_instance.loadFile(filename)
     statistics_collector_from_pdb.add_pose_energies(pe_instance)
 
 
+
+
 #stddev and mean for subset
-#print 'SER with 10-20 neighbors:', statistics_collector_from_pdb.calculate_averages_and_stdevs_from_subset('SER', 'rama', range(10, 21))
+
+print 'SER with 10-20 neighbors:\n', combined_score_term,'\n', statistics_collector_from_pdb.calculate_averages_and_stdevs_from_subset('SER', combined_score_term, range(10, 21))
 #print 'SER with any number of neighbors (other method):', statistics_collector_from_pdb.calculate_averages_and_stdevs('SER', 'rama')
 
 
@@ -61,24 +64,21 @@ for filename in FileList:
 #Serialization
 for aminoacid in aminoacids:
     statistics_collector_from_pdb.restype_av_scores[aminoacid].pickle_res_type_average_scores('../pickled-files/'+aminoacid+'.txt')
+'''
 
 #deserialize archives
 for archive in archive_list:
     f = file(archive, 'rb')
-    statistics_collector_from_archive.add_archived_data( cPickle.load(f) )
+    statistics_collector_from_pdb.add_archived_data( cPickle.load(f) )
     f.close()
 
+
 #best score terms
-aminoacid = 'ARG'
-score_term = 'fa_atr'
-print aminoacid, score_term
-print 'Best score is %s. \npdb-identfier of file: %s \nresidue number: %s' %statistics_collector_from_pdb.restype_av_scores[aminoacid].get_best_score(score_term)
+aminoacid = 'TRP'
+score_term = 'fa_rep'
+#print 'Best score is %s. \npdb-identfier of file: %s \nresidue number: %s' %statistics_collector_from_pdb.restype_av_scores[aminoacid].get_best_score(score_term)
 
 #Histograms
-#statistics_collector_from_archive.restype_av_scores['GLU'].make_histogram_for_scoreterm('fa_rep')
-#statistics_collector_from_archive.restype_av_scores['GLU'].make_histogram_for_scoreterm_for_ncounts('fa_atr', range(0,41))
-#statistics_collector_from_pdb.restype_av_scores['GLU'].make_histogram_for_scoreterm_for_ncounts('fa_atr', range(0,41))
-
-#statistics_collector_from_pdb.restype_av_scores['GLU'].make_histogram_for_scoreterm_for_ncounts('fa_atr', range(0,12))
-#statistics_collector_from_pdb.restype_av_scores['GLU'].make_histogram_for_scoreterm_for_ncounts('fa_atr', range(20,41))
-
+#statistics_collector_from_archive.restype_av_scores[aminoacid].make_histogram_for_scoreterm_for_ncounts(score_term, range(0,41))
+statistics_collector_from_pdb.restype_av_scores[aminoacid].make_histogram_for_scoreterm_for_ncounts(score_term, range(0,41))
+'''

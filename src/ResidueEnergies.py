@@ -5,9 +5,6 @@ from ResTypeAverageScores import ResTypeAverageScores
 from CalphaCoordinates import CalphaCoordinates, critical_distance_squared
 from constants import *
 
-#number_of_neighbors_list = range(0,41)
-#aminoacids = ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS', 'LEU', 'MET', 'ASN', 'PRO', 'GLN', 'ARG', 'SER', 'THR', 'VAL', 'TRP', 'TYR']
-
 
 class ResidueEnergies(object):
 

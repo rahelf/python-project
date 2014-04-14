@@ -33,3 +33,4 @@ class ResTypesStatisticsCollector(object):
 	def add_archived_data(self, archived_res_type_average_scores):
 		this_aa = archived_res_type_average_scores.res_type
 		self.restype_av_scores[this_aa].add_other_instance(archived_res_type_average_scores)
+

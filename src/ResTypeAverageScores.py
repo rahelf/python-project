@@ -2,12 +2,10 @@ import numpy as np
 from operator import add
 import sys
 import cPickle
-#rom ResidueEnergies import number_of_neighbors_list
 from constants import *
 
 import matplotlib.pyplot as plt
 
-#number_of_neighbors_list = range(0,41)
 
 class ResTypeAverageScores(object):
 
@@ -18,24 +16,24 @@ class ResTypeAverageScores(object):
         self.best_score_term_dict = {}
         for score_term in self.score_term_list:
             self.best_score_term_dict[score_term] = (10000, "", 0)
-        #print self.best_score_term_dict
+
         st_counter = 1
         while st_counter < len( score_term_list):
             self.res_type_all_score_dict[score_term_list[st_counter]] = {}
             for n in number_of_neighbors_list:
                 (self.res_type_all_score_dict[score_term_list[st_counter]])[number_of_neighbors_list[n]] = []
             st_counter += 1
+        #if score_terms_to_be_combined:
+         #   self.res_type_all_score_dict[combined_score_term]={}
+          #  for n in number_of_neighbors_list:
+           #     self.res_type_all_score_dict[combined_score_term][number_of_neighbors_list[n]] = []
         self.res_type = residue_type
         if( score_term_list == []):
             self.num_entries = 0
         else:
             self.num_entries = 1
         self.pdb_identifier_list = [pdb_identifier]
-        #print self.score_term_list
-        #print self.res_type_all_score_dict[]
-        #self.best_res = ResidueEnergies_instance.ResidueEnergies()(?)'''
-        #print "printing all_score_dict at end of initialization"
-        #print self.res_type_all_score_dict
+
 
 
     @classmethod
@@ -71,11 +69,12 @@ class ResTypeAverageScores(object):
             for n in number_of_neighbors_list:
                 self.res_type_all_score_dict[scoreterm][n].extend(other_instance.res_type_all_score_dict[scoreterm][n])
 
-
         for score_term in self.score_term_list:
             #print other_instance.best_score_term_dict[score_term][0], self.best_score_term_dict[score_term][0]
             if self.best_score_term_dict[score_term][0] > other_instance.best_score_term_dict[score_term][0]:
                 self.best_score_term_dict[score_term] = other_instance.best_score_term_dict[score_term]
+
+        self.calculate_sum_of_several_score_terms()
 
 
     def add_residue_energies(self,  ResidueEnergies_instance):
@@ -136,16 +135,23 @@ class ResTypeAverageScores(object):
         data = self.get_merged_list_for_all_nn(score_term)
         minx = int( np.floor(np.min(data)) )
         maxx = int( np.ceil(np.max(data)) )
-        plt.hist( data, bins=int( (maxx - minx)/0.25), range=[minx, maxx], label=score_term, histtype='step' )
+        plt.title('%s %s' %(self.res_type, score_term))
+        plt.hist( data, bins=int( (maxx - minx)/0.25), range=[minx, maxx], label=score_term, histtype='stepfilled', normed = True)
+        plt.xlabel('score')
+        plt.ylabel('relative frequency')
         plt.show()
         plt.savefig('test_histogram.pdf')
 
     def make_histogram_for_scoreterm_for_ncounts(self, score_term, nn_list):
         data = self.get_merged_list_for_ncounts(score_term, nn_list)
+        print len(data)
         minx = int( np.floor(np.min(data)) )
         maxx = int( np.ceil(np.max(data)) )
-        plt.hist( data, bins=int( (maxx - minx)/0.25), range=[minx, maxx], label=score_term, histtype='step' )
+        plt.title('%s %s' %(self.res_type, score_term))
+        plt.hist( data, bins=int( (maxx - minx)/0.25), range=[minx, maxx], label=score_term, histtype='stepfilled', normed = True)
         plt.xlim(-10,10)
+        plt.xlabel('score')
+        plt.ylabel('relative frequency')
         plt.savefig('%s_nn_list%s-%s_test_histogram_subset.pdf' %(score_term, nn_list[0], nn_list[-1]))
         plt.show()
 
@@ -155,3 +161,8 @@ class ResTypeAverageScores(object):
         pickle_file = open(filename, 'w')
         cPickle.dump(self, pickle_file)
         pickle_file.close()
+
+    def calculate_sum_of_several_score_terms(self):
+        self.res_type_all_score_dict[combined_score_term] = {}
+        for n in number_of_neighbors_list:
+            self.res_type_all_score_dict[combined_score_term][n] = self.res_type_all_score_dict[score_terms_to_be_combined[0]][n] + self.res_type_all_score_dict[score_terms_to_be_combined[1]][n]
