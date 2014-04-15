@@ -53,7 +53,7 @@ statistics_collector_from_archive = ResTypesStatisticsCollector()
 
 #initialize PoseEnergies for eacht file in list
 for filename in FileList:
-    filename = '../../pdbdir/'+filename
+    #filename = '../../pdbdir/'+filename
     pe_instance = PoseEnergies()
     pe_instance.loadFile(filename)
     statistics_collector_from_pdb.add_pose_energies(pe_instance)
@@ -94,10 +94,10 @@ for aminoacid in aminoacids:
 
 
 #best score terms
-aminoacid = 'TRP'
-score_term = 'fa_rep'
-print 'Best score is %s. \npdb-identfier of file: %s \nresidue number: %s' %statistics_collector_from_pdb.restype_av_scores[aminoacid].get_best_score(score_term)
+#aminoacid = 'TRP'
+#score_term = 'fa_rep'
+#print 'Best score is %s. \npdb-identfier of file: %s \nresidue number: %s' %statistics_collector_from_pdb.restype_av_scores[aminoacid].get_best_score(score_term)
 
 #Histograms
 #statistics_collector_from_archive.restype_av_scores[aminoacid].make_histogram_for_scoreterm_for_ncounts(score_term, range(0,41))
-statistics_collector_from_pdb.restype_av_scores[aminoacid].make_histogram_for_scoreterm_for_ncounts(score_term, range(0,41))
+#statistics_collector_from_pdb.restype_av_scores[aminoacid].make_histogram_for_scoreterm_for_ncounts(score_term, range(0,41))

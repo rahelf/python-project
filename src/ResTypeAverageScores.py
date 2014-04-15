@@ -3,8 +3,9 @@ from operator import add
 import sys
 import cPickle
 from constants import *
+import imp
 
-#import matplotlib.pyplot as plt
+#import matplotlib.pyplot as matplotlib.pyplot
 
 
 class ResTypeAverageScores(object):
@@ -130,30 +131,42 @@ class ResTypeAverageScores(object):
 
 
     def make_histogram_for_scoreterm(self, score_term):
-        import matplotlib.pyplot as plt
+        '''
+        try:
+            imp.find_module('matplotlib.pyplot')
+        except ImportError, err:
+            print 'ImportError:', err
+        '''
+        import matplotlib.pyplot
         data = self.get_merged_list_for_all_nn(score_term)
         minx = int( np.floor(np.min(data)) )
         maxx = int( np.ceil(np.max(data)) )
-        plt.title('%s %s' %(self.res_type, score_term))
-        plt.hist( data, bins=int( (maxx - minx)/0.25), range=[minx, maxx], label=score_term, histtype='stepfilled', normed = True)
-        plt.xlabel('score')
-        plt.ylabel('relative frequency')
-        plt.show()
-        plt.savefig('histograms/test_histogram.pdf')
+        matplotlib.pyplot.title('%s %s' %(self.res_type, score_term))
+        matplotlib.pyplot.hist( data, bins=int( (maxx - minx)/0.25), range=[minx, maxx], label=score_term, histtype='stepfilled', normed = True)
+        matplotlib.pyplot.xlabel('score')
+        matplotlib.pyplot.ylabel('relative frequency')
+        matplotlib.pyplot.show()
+        matplotlib.pyplot.savefig('histograms/test_histogram.pdf')
 
     def make_histogram_for_scoreterm_for_ncounts(self, score_term, nn_list):
-        import matplotlib.pyplot as plt
+        '''
+        try:
+            imp.find_module('matplotlib.pyplot')
+        except ImportError, err:
+            print 'ImportError:', err
+        '''
+        import matplotlib.pyplot
         data = self.get_merged_list_for_ncounts(score_term, nn_list)
         print len(data)
         minx = int( np.floor(np.min(data)) )
         maxx = int( np.ceil(np.max(data)) )
-        plt.title('%s %s' %(self.res_type, score_term))
-        plt.hist( data, bins=int( (maxx - minx)/0.25), range=[minx, maxx], label=score_term, histtype='stepfilled', normed = True)
-        plt.xlim(-10,10)
-        plt.xlabel('score')
-        plt.ylabel('relative frequency')
-        plt.savefig('histograms/%s_nn_list%s-%s_test_histogram_subset.pdf' %(score_term, nn_list[0], nn_list[-1]))
-        plt.show()
+        matplotlib.pyplot.title('%s %s' %(self.res_type, score_term))
+        matplotlib.pyplot.hist( data, bins=int( (maxx - minx)/0.25), range=[minx, maxx], label=score_term, histtype='stepfilled', normed = True)
+        matplotlib.pyplot.xlim(-10,10)
+        matplotlib.pyplot.xlabel('score')
+        matplotlib.pyplot.ylabel('relative frequency')
+        matplotlib.pyplot.savefig('histograms/%s_nn_list%s-%s_test_histogram_subset.pdf' %(score_term, nn_list[0], nn_list[-1]))
+        matplotlib.pyplot.show()
 
 
     def pickle_res_type_average_scores(self, filename):
