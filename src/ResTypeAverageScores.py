@@ -4,11 +4,10 @@ import sys
 import cPickle
 from constants import *
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 
 class ResTypeAverageScores(object):
-
 
     def __init__( self, residue_type, score_term_list, pdb_identifier):
         self.res_type_all_score_dict = {}
@@ -23,10 +22,7 @@ class ResTypeAverageScores(object):
             for n in number_of_neighbors_list:
                 (self.res_type_all_score_dict[score_term_list[st_counter]])[number_of_neighbors_list[n]] = []
             st_counter += 1
-        #if score_terms_to_be_combined:
-         #   self.res_type_all_score_dict[combined_score_term]={}
-          #  for n in number_of_neighbors_list:
-           #     self.res_type_all_score_dict[combined_score_term][number_of_neighbors_list[n]] = []
+      
         self.res_type = residue_type
         if( score_term_list == []):
             self.num_entries = 0
@@ -35,16 +31,17 @@ class ResTypeAverageScores(object):
         self.pdb_identifier_list = [pdb_identifier]
 
 
-
     @classmethod
     def empty_init( cls, residue_type ):
         return cls( residue_type, [], [])
 
     def add_other_instance(self, other_instance):
+
         #print other_instance.best_score_term_dict['rama']
         #1a. safety check whether other instance has same residue type
         if self.res_type != other_instance.res_type:
             sys.exit("ERROR in function add_other_instance: ResTypeAverageScores instance to be added has different residue_type!")
+
         #in case we got initialized empty we simply copy everything and return
         if self.num_entries == 0: #means we got initialized empty
             self.score_term_list = other_instance.score_term_list
@@ -55,6 +52,7 @@ class ResTypeAverageScores(object):
             return
         #1b. safety check whether other instance has same score terms
         if self.score_term_list != other_instance.score_term_list:
+            print 'self.score_term_list:', self.score_term_list, '\nother_instance.score_term_list:', other_instance.score_term_list
             sys.exit("ERROR in function add_other_instance: ResTypeAverageScores_instance to be added has different score_term_list!")
         #2. add num_entries and append lists, also append pdb identifier 
         #= ResTypeAverageScores_instance
@@ -74,7 +72,7 @@ class ResTypeAverageScores(object):
             if self.best_score_term_dict[score_term][0] > other_instance.best_score_term_dict[score_term][0]:
                 self.best_score_term_dict[score_term] = other_instance.best_score_term_dict[score_term]
 
-        self.calculate_sum_of_several_score_terms()
+        
 
 
     def add_residue_energies(self,  ResidueEnergies_instance):
@@ -132,6 +130,7 @@ class ResTypeAverageScores(object):
 
 
     def make_histogram_for_scoreterm(self, score_term):
+        import matplotlib.pyplot as plt
         data = self.get_merged_list_for_all_nn(score_term)
         minx = int( np.floor(np.min(data)) )
         maxx = int( np.ceil(np.max(data)) )
@@ -140,9 +139,10 @@ class ResTypeAverageScores(object):
         plt.xlabel('score')
         plt.ylabel('relative frequency')
         plt.show()
-        plt.savefig('test_histogram.pdf')
+        plt.savefig('histograms/test_histogram.pdf')
 
     def make_histogram_for_scoreterm_for_ncounts(self, score_term, nn_list):
+        import matplotlib.pyplot as plt
         data = self.get_merged_list_for_ncounts(score_term, nn_list)
         print len(data)
         minx = int( np.floor(np.min(data)) )
@@ -152,7 +152,7 @@ class ResTypeAverageScores(object):
         plt.xlim(-10,10)
         plt.xlabel('score')
         plt.ylabel('relative frequency')
-        plt.savefig('%s_nn_list%s-%s_test_histogram_subset.pdf' %(score_term, nn_list[0], nn_list[-1]))
+        plt.savefig('histograms/%s_nn_list%s-%s_test_histogram_subset.pdf' %(score_term, nn_list[0], nn_list[-1]))
         plt.show()
 
 
@@ -162,7 +162,14 @@ class ResTypeAverageScores(object):
         cPickle.dump(self, pickle_file)
         pickle_file.close()
 
-    def calculate_sum_of_several_score_terms(self):
+    def calculate_sum_of_several_score_terms(self, score_terms_to_be_combined):
+        combined_score_term = "+".join(score_terms_to_be_combined)
+        self.score_term_list.append(combined_score_term)
         self.res_type_all_score_dict[combined_score_term] = {}
-        for n in number_of_neighbors_list:
-            self.res_type_all_score_dict[combined_score_term][n] = self.res_type_all_score_dict[score_terms_to_be_combined[0]][n] + self.res_type_all_score_dict[score_terms_to_be_combined[1]][n]
+        for nn in number_of_neighbors_list:
+            self.res_type_all_score_dict[combined_score_term][nn] = []
+            for i in range(len(self.res_type_all_score_dict[self.score_term_list[1]][nn])):
+                sum_of_scores = 0
+                for j in range(len(score_terms_to_be_combined)):
+                    sum_of_scores += (self.res_type_all_score_dict[score_terms_to_be_combined[j]][nn])[i]
+                self.res_type_all_score_dict[combined_score_term][nn].append(sum_of_scores)

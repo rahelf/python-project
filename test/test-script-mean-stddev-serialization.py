@@ -112,11 +112,11 @@ for filename in all_file_names:
 
 
 for aminoacid in aminoacids:
-    statistics_collector_from_pdb.restype_av_scores[aminoacid].pickle_res_type_average_scores(aminoacid+'.txt')
+    statistics_collector_from_pdb.restype_av_scores[aminoacid].pickle_res_type_average_scores('pickle-test/'+aminoacid+'.txt')
 
 
 for aminoacid in aminoacids:
-    filename = aminoacid + '.txt'
+    filename = 'pickle-test/'+ aminoacid + '.txt'
     f = file(filename, 'rb')
     loaded_object = cPickle.load(f)
     statistics_collector_from_archive.add_archived_data( loaded_object)

@@ -4,4 +4,3 @@ aminoacids = ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS', 'LE
 
 
 score_terms_to_be_combined = ['hbond_bb_sc', 'hbond_sc']
-combined_score_term = 'hbond_bb_sc+hbond_sc'

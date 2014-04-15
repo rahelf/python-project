@@ -15,7 +15,7 @@ import sys
 
 error4_seen = False
 
-filename = '../../../pdbdir/10mh_nohet_1_relax.pdb'
+filename = '10mh_nohet_1_relax.pdb'
 pe_instance = PoseEnergies()
 pe_instance.loadFile(filename)
 
@@ -39,7 +39,7 @@ else:
 
 
 
-filename1 = '../../test/10gs_nohet_1_relax.pdb'
+filename1 = '10gs_nohet_1_relax.pdb'
 filename2 = 'serin-only-test-pdb.txt'
 
 statistics_collector_from_pdb1 = ResTypesStatisticsCollector()
