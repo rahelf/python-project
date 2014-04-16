@@ -62,8 +62,8 @@ class PoseEnergies(object):
         for i in range(len(lines)):
 
             # read atom positions and instantiate CalphaCoordinates
-            if lines[i].split()[0] == 'ATOM' and lines[i].split()[2] == 'CA' and lines[i].split()[3] in aminoacids:
-                calpha_list.append( CalphaCoordinates (lines[i].split()[3], lines[i].split()[5], float(lines[i].split()[6]), float(lines[i].split()[7]), float(lines[i].split()[8])))
+            if lines[i][0:4] == 'ATOM' and lines[i][13:15] == 'CA' and lines[i][17:20] in aminoacids:
+                calpha_list.append( CalphaCoordinates (lines[i][17:20], int(lines[i][22:26]), float(lines[i][30:38]), float(lines[i][38:46]), float(lines[i][46:54])))
 
             #find beginning and end of amino acid score terms
             elif re.match('#BEGIN_POSE_ENERGIES_TABLE', lines[i]):

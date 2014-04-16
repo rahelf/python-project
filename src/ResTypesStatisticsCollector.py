@@ -22,7 +22,7 @@ class ResTypesStatisticsCollector(object):
 		cur_mean = self.restype_av_scores[res_type].get_mean_val(score_term)
 		cur_stddev = self.restype_av_scores[res_type].get_stddev(score_term)
 		return (cur_mean, cur_stddev)
-		print cur_mean, cur_stddev
+		#print cur_mean, cur_stddev
 
 	def calculate_averages_and_stdevs_from_subset(self, res_type, score_term, nn_list):
 		cur_mean = self.restype_av_scores[res_type].get_mean_val_for_ncounts( score_term, nn_list)

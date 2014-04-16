@@ -53,7 +53,7 @@ class ResTypeAverageScores(object):
             return
         #1b. safety check whether other instance has same score terms
         if self.score_term_list != other_instance.score_term_list:
-            print 'self.score_term_list:', self.score_term_list, '\nother_instance.score_term_list:', other_instance.score_term_list
+            #print 'self.score_term_list:', self.score_term_list, '\nother_instance.score_term_list:', other_instance.score_term_list
             sys.exit("ERROR in function add_other_instance: ResTypeAverageScores_instance to be added has different score_term_list!")
         #2. add num_entries and append lists, also append pdb identifier 
         #= ResTypeAverageScores_instance
@@ -157,7 +157,7 @@ class ResTypeAverageScores(object):
         '''
         import matplotlib.pyplot
         data = self.get_merged_list_for_ncounts(score_term, nn_list)
-        print len(data)
+        #print len(data)
         minx = int( np.floor(np.min(data)) )
         maxx = int( np.ceil(np.max(data)) )
         matplotlib.pyplot.title('%s %s' %(self.res_type, score_term))

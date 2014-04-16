@@ -55,9 +55,17 @@ statistics_collector_from_archive = ResTypesStatisticsCollector()
 for filename in FileList:
     #filename = '../../pdbdir/'+filename
     pe_instance = PoseEnergies()
-    pe_instance.loadFile(filename)
-    statistics_collector_from_pdb.add_pose_energies(pe_instance)
+    try:
+        pe_instance.loadFile(filename)
+    except:
+        print "Caught exception when trying to read %s" % filename
+        continue
 
+    try:
+        statistics_collector_from_pdb.add_pose_energies(pe_instance)
+    except:
+        print "Caught exception when trying to add values from  %s to statistics calculator" % filename
+        continue
 
 #combination of score terms
 #score_terms_to_be_combined = ['rama', 'fa_atr']
