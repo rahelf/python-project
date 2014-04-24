@@ -54,19 +54,19 @@ pe_instance2 = PoseEnergies()
 pe_instance2.loadFile(filename2)
 statistics_collector_from_pdb2.add_pose_energies(pe_instance2)
 
-mean1 = statistics_collector_from_pdb1.calculate_averages_and_stdevs_from_subset('SER', 'rama', range(10,21))[0]
-stddev1 = statistics_collector_from_pdb1.calculate_averages_and_stdevs_from_subset('SER', 'rama', range(10,21))[1]
-mean2 = statistics_collector_from_pdb2.calculate_averages_and_stdevs('SER', 'rama')[0]
-stddev2 = statistics_collector_from_pdb2.calculate_averages_and_stdevs('SER', 'rama')[1]
+mean1 = statistics_collector_from_pdb1.calculate_averages_and_stddevs_from_subset('SER', 'rama', range(10,21))[0]
+stddev1 = statistics_collector_from_pdb1.calculate_averages_and_stddevs_from_subset('SER', 'rama', range(10,21))[1]
+mean2 = statistics_collector_from_pdb2.calculate_averages_and_stddevs('SER', 'rama')[0]
+stddev2 = statistics_collector_from_pdb2.calculate_averages_and_stddevs('SER', 'rama')[1]
 
 
 
-#print statistics_collector_from_pdb1.calculate_averages_and_stdevs_from_subset('SER', 'rama', range(10, 21))
-#print statistics_collector_from_pdb2.calculate_averages_and_stdevs('SER', 'rama')
+#print statistics_collector_from_pdb1.calculate_averages_and_stddevs_from_subset('SER', 'rama', range(10, 21))
+#print statistics_collector_from_pdb2.calculate_averages_and_stddevs('SER', 'rama')
 
 if not (round(mean1, 6) == round(mean2, 6) and round(stddev1, 6) == round(stddev2, 6)):
 	print 'ERROR: calculating stddev and mean from a subset (depending on amount of neighbors) does not work correctly!'
 else:
 	print 'No errror seen in calculating stddev and mean from a subset (depending on amount of neighbors)'
 
-#print statistics_collector_from_pdb1.calculate_averages_and_stdevs_from_subset('SER', 'rama', range(10, 21)), statistics_collector_from_pdb2.calculate_averages_and_stdevs('SER', 'rama')
+#print statistics_collector_from_pdb1.calculate_averages_and_stddevs_from_subset('SER', 'rama', range(10, 21)), statistics_collector_from_pdb2.calculate_averages_and_stddevs('SER', 'rama')

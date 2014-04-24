@@ -3,6 +3,7 @@ import glob
 from ResidueEnergies import ResidueEnergies, PoseEnergies,critical_distance_squared
 from ResTypeAverageScores import ResTypeAverageScores
 from ResTypesStatisticsCollector import ResTypesStatisticsCollector
+from ZScoreCalculator import ZScoreCalculator
 from constants import *
 
 import cPickle
@@ -11,31 +12,57 @@ import sys
 
 pdb_listfile = ""
 archive_listfile = ""
-
+pdb_file = ''
+pdb_file_2 = ''
+score_term_z = ''
+score_term_minus_z = ''
+score_term_plus_z = ''
+histogram_location = ''
+score_term = 'total'
 
 
 #Command Line Arguments
 CommandArgs = sys.argv[1:]
 for arg in CommandArgs:
-    if arg == '-pdbfiles':
+    if arg == '-in':
         pdb_listfile = CommandArgs[CommandArgs.index(arg)+1]
         listmode = 1
-    elif arg == '-archived':
+    elif arg == '-arch':
         archive_listfile = CommandArgs[CommandArgs.index(arg)+1]
+    elif arg == '-pickle':
+        pickle_location = CommandArgs[CommandArgs.index(arg)+1]
+    elif arg == '-hist':
+        histogram_location = CommandArgs[CommandArgs.index(arg)+1]
+    elif arg == '-z1':
+        pdb_file = CommandArgs[CommandArgs.index(arg)+1]
+    elif arg == '-z2':
+        pdb_file_2 = CommandArgs[CommandArgs.index(arg)+1]
+    elif arg == '-st':
+        score_term_z = CommandArgs[CommandArgs.index(arg)+1]
+    elif arg == '-st+':
+        score_term_plus_z = CommandArgs[CommandArgs.index(arg)+1]
+    elif arg == '-st-':
+        score_term_minus_z = CommandArgs[CommandArgs.index(arg)+1]
 
-if not pdb_listfile:
+
+#data needed (either from archive or calculated from files)
+if not (pdb_listfile or archive_listfile):
      sys.exit('Error, please supply name of listfile')
 
 
 
-#read files
-inlist = open(pdb_listfile, 'r')
-liste = inlist.readlines()
-FileList = []
-for item in liste:
-    FileList.append(item.rstrip('\n'))
-inlist.close()
+#read given file names and add them to a list (FileList)
+if pdb_listfile !="":
+    inlist = open(pdb_listfile, 'r')
+    liste = inlist.readlines()
+    FileList = []
+    for item in liste:
+        FileList.append(item.rstrip('\n'))
+    inlist.close()
+else:
+    FileList = False
 
+# archive_listfile contains a list of archived files (typically one for each aminoacid).
 archive_list = []
 if archive_listfile !="":
     archhandle = open(archive_listfile, 'r')
@@ -45,67 +72,154 @@ if archive_listfile !="":
         archive_list.append( line.rstrip('\n'))
 
 
-
 # initialize ResTypesStatisticsCollector
 statistics_collector_from_pdb = ResTypesStatisticsCollector()
 statistics_collector_from_archive = ResTypesStatisticsCollector()
 
 
-#initialize PoseEnergies for eacht file in list
-for filename in FileList:
-    #filename = '../../pdbdir/'+filename
-    pe_instance = PoseEnergies()
-    try:
-        pe_instance.loadFile(filename)
-    except:
-        print "Caught exception when trying to read %s" % filename
-        continue
+#initialize PoseEnergies for each file in list
+if FileList:
+    for filename in FileList:
+        pe_instance = PoseEnergies()
+        try:
+            pe_instance.loadFile(filename)
+        except:
+            print "Caught exception when trying to read %s" % filename
+            continue
 
-    try:
-        statistics_collector_from_pdb.add_pose_energies(pe_instance)
-    except:
-        print "Caught exception when trying to add values from  %s to statistics calculator" % filename
-        continue
-
-#combination of score terms
-#score_terms_to_be_combined = ['rama', 'fa_atr']
-#aminoacid = 'TYR'
-#statistics_collector_from_pdb.restype_av_scores[aminoacid].calculate_sum_of_several_score_terms(score_terms_to_be_combined)
-#print'statistics for %s and the combined score term %s: ' %(aminoacid, score_terms_to_be_combined), statistics_collector_from_pdb.calculate_averages_and_stdevs(aminoacid, 'rama+fa_atr')
-
-#number_of_entbries = 0
-#for nn in number_of_neighbors_list:
-    #print nn, ':', len(statistics_collector_from_pdb.restype_av_scores[aminoacid].res_type_all_score_dict['fa_atr'][nn])
-    #number_of_entries += len(statistics_collector_from_pdb.restype_av_scores[aminoacid].res_type_all_score_dict['fa_atr'][nn])
-#print 'total number of entries for the aminoacid: ', number_of_entries
-
-#print 'statistics for first scoreterm only: ', statistics_collector_from_pdb.calculate_averages_and_stdevs(aminoacid, 'rama')
-#print 'statistics for second scoreterm only:', statistics_collector_from_pdb.calculate_averages_and_stdevs(aminoacid, 'fa_atr')
-
-
-
-#average and standard deviation
-#print statistics_collector_from_pdb.calculate_averages_and_stdevs('SER', 'rama' )
-
+        try:
+            statistics_collector_from_pdb.add_pose_energies(pe_instance)
+        except:
+            print "Caught exception when trying to add values from  %s to statistics collector" % filename
+            continue
 
 
 #Serialization
+#for aminoacid in aminoacids:
+#    statistics_collector_from_pdb.restype_av_scores[aminoacid].pickle_res_type_average_scores(pickle_location+aminoacid+'.txt')
+
+
+#deserialize archived files
+for archive in archive_list:
+    f = file(archive, 'rb')
+    statistics_collector_from_archive.add_archived_data( cPickle.load(f) )
+    #print archive
+    f.close()
+
+
+#Deserialization of one particular file (faster)
+#aminoacids = ['GLU']
+# = '/home/rahel/uni/wise1314/python/pdbstats/pickle11k/GLU.txt'
+#statistics_collector_from_archive.add_archived_data(cPickle.load(file(archive, 'rb')))
+
+
+
+#combination of score terms (plus)
+score_terms_to_be_combined = ['hbond_bb_sc', 'hbond_sc']
 for aminoacid in aminoacids:
-    statistics_collector_from_pdb.restype_av_scores[aminoacid].pickle_res_type_average_scores('../pickled-files/'+aminoacid+'.txt')
+    statistics_collector_from_archive.restype_av_scores[aminoacid].calculate_sum_of_several_score_terms(score_terms_to_be_combined)
 
 
-#deserialize archives
-#for archive in archive_list:
-#    f = file(archive, 'rb')
-#    statistics_collector_from_pdb.add_archived_data( cPickle.load(f) )
-#    f.close()
+
+#subtraction of score_terms ----  important for subtraction of fa_dun from total
+minuend = 'total'
+subtrahend = 'fa_dun'
+for aminoacid in aminoacids:
+    statistics_collector_from_archive.restype_av_scores[aminoacid].subtract_score_terms(minuend, subtrahend)
+
+
+#average and standard deviation
+#print statistics_collector_from_archive.get_mean_and_stddev('SER', 'hbond_bb_sc+hbond_sc', 5)
+#print statistics_collector_from_archive.get_mean_and_stddev('SER', 'total-fa_dun', 9)
 
 
 #best score terms
-#aminoacid = 'TRP'
-#score_term = 'fa_rep'
-#print 'Best score is %s. \npdb-identfier of file: %s \nresidue number: %s' %statistics_collector_from_pdb.restype_av_scores[aminoacid].get_best_score(score_term)
+#print '\nfrom archive: Best score is %s. \npdb-identfier of file: %s \nresidue number: %s' %statistics_collector_from_archive.restype_av_scores[aminoacid].get_best_score(score_term)
 
-#Histograms
-#statistics_collector_from_archive.restype_av_scores[aminoacid].make_histogram_for_scoreterm_for_ncounts(score_term, range(0,41))
-#statistics_collector_from_pdb.restype_av_scores[aminoacid].make_histogram_for_scoreterm_for_ncounts(score_term, range(0,41))
+
+#frequency of aminoacids and neighbor numbers
+#statistics_collector_from_archive.restype_av_scores['GLU'].plot_relative_frequencies_of_numbers_of_neighbors()
+#statistics_collector_from_archive.restype_av_scores['GLU'].get_relative_frequency_for_nn(10)
+#for aminoacid in aminoacids:
+#    statistics_collector_from_archive.restype_av_scores[aminoacid].plot_relative_frequencies_of_numbers_of_neighbors()
+
+
+aminoacids = ['TYR', 'VAL']
+interesting_score_terms = ['fa_dun']
+
+if histogram_location != '' and interesting_score_terms != '':
+    for aminoacid in aminoacids:
+        if aminoacid in outside_aa:
+            main_neighbor_situations = main_neighbor_situations_outside
+        elif aminoacid in inside_aa:
+            main_neighbor_situations = main_neighbor_situations_inside
+        for score_term in interesting_score_terms:
+            for neighbor_situation in main_neighbor_situations:
+                mean = statistics_collector_from_archive.calculate_averages_and_stddevs_from_subset(aminoacid, score_term, neighbor_situation)[0]
+                stddev = statistics_collector_from_archive.calculate_averages_and_stddevs_from_subset(aminoacid, score_term, neighbor_situation)[1]
+                number_of_residues = len(statistics_collector_from_archive.restype_av_scores[aminoacid].get_merged_list_for_ncounts(score_term, neighbor_situation))
+                statistics_collector_from_archive.restype_av_scores[aminoacid].make_histogram_for_scoreterm_for_ncounts(score_term, neighbor_situation, number_of_residues, histogram_location, mean, stddev)
+
+
+#Z scores (filenames)
+#pdb_file = '/home/rahel/uni/wise1314/python/vergl_designs/3b4x_talcstrlx_0001.pdb'
+#pdb_file_2 = '/home/rahel/uni/wise1314/python/vergl_designs/dCM13_talcstrlx_0001.pdb'
+
+if score_term_z != '':
+    print 'Calculation of z scores for %s' % score_term_z
+    if pdb_file != '' and pdb_file_2 == '':
+        print 'z-scores:'
+        reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
+        zscores = reference_z_scores.calculate_z_scores(score_term)
+        for key in zscores.keys():
+            print '\n%s: %s    %s' %(key, zscores[key][1], zscores[key][0])
+    elif pdb_file!= '' and pdb_file_2 != '':
+        print 'difference in z scores_'
+        reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
+        z_scores_after_modification = ZScoreCalculator(pdb_file_2, statistics_collector_from_archive)
+        delta_z = reference_z_scores.calculate_differences_in_z_scores(z_scores_after_modification, score_term)
+        for i in range(len(delta_z)):
+            print '%s   %s   %s' %(delta_z[i][0], delta_z[i][1], delta_z[i][2])
+
+elif score_term_plus_z != '':
+    print 'Calculation of z scores for %s' % score_term_plus_z
+    #scoreterms trennen am plus
+    score_terms = score_term_plus_z.split("+", 1)
+    print score_terms
+    for aminoacid in aminoacids:
+        statistics_collector_from_archive.restype_av_scores[aminoacid].calculate_sum_of_several_score_terms(score_terms)
+    if pdb_file != '' and pdb_file_2 == '':
+        print 'z-scores:'
+        reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
+        zscores = reference_z_scores.calculate_z_scores_combined_plus(score_terms)
+        for key in zscores.keys():
+            print '\n%s: %s    %s' %(key, zscores[key][1], zscores[key][0])
+    elif pdb_file!= '' and pdb_file_2 != '':
+        print 'difference in z scores_'
+        reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
+        z_scores_after_modification = ZScoreCalculator(pdb_file_2, statistics_collector_from_archive)
+        delta_z = reference_z_scores.calculate_differences_in_z_scores_combined_plus(z_scores_after_modification, score_terms)
+        for i in range(len(delta_z)):
+            print '%s   %s   %s' %(delta_z[i][0], delta_z[i][1], delta_z[i][2])
+
+elif score_term_minus_z != '':
+    print 'Calculation of z scores for %s' % score_term_minus_z
+    #scoreterms trennen am minus
+    score_terms = score_term_minus_z.split("-", 1)
+    minuend = score_terms[0]
+    subtrahend = score_terms[1]
+    for aminoacid in aminoacids:
+        statistics_collector_from_archive.restype_av_scores[aminoacid].subtract_score_terms(minuend, subtrahend)
+    if pdb_file != '' and pdb_file_2 == '':
+        print 'z-scores:'
+        reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
+        zscores = reference_z_scores.calculate_z_scores_combined_minus(minuend, subtrahend)
+        for key in zscores.keys():
+            print '\n%s: %s    %s' %(key, zscores[key][1], zscores[key][0])
+    elif pdb_file!= '' and pdb_file_2 != '':
+        print 'difference in z scores_'
+        reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
+        z_scores_after_modification = ZScoreCalculator(pdb_file_2, statistics_collector_from_archive)
+        delta_z = reference_z_scores.calculate_differences_in_z_scores_combined_minus(z_scores_after_modification, minuend, subtrahend)
+        for i in range(len(delta_z)):
+            print '%s   %s   %s' %(delta_z[i][0], delta_z[i][1], delta_z[i][2])

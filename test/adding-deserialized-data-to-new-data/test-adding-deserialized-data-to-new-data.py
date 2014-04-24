@@ -30,7 +30,7 @@ for filename in FileList:
 for aminoacid in aminoacids:
     statistics_collector_from_pdb.restype_av_scores[aminoacid].pickle_res_type_average_scores('archived/'+aminoacid+'.txt')
 
-#print 'shortlist1:', statistics_collector_from_pdb.calculate_averages_and_stdevs('SER', 'rama')
+#print 'shortlist1:', statistics_collector_from_pdb.calculate_averages_and_stddevs('SER', 'rama')
 
 ####################################################################################
 
@@ -63,7 +63,7 @@ for filename in FileList2:
     statistics_collector_from_pdb.add_pose_energies(pe_instance)
 
 
-#print 'shortlist2:',  statistics_collector_from_pdb.calculate_averages_and_stdevs('SER', 'rama')
+#print 'shortlist2:',  statistics_collector_from_pdb.calculate_averages_and_stddevs('SER', 'rama')
 
 #deserialize archives
 for archive in archive_list:
@@ -77,7 +77,7 @@ for archive in archive_list:
     f.close()
 
 
-print 'total from shortlist2 and archived shortlist1', statistics_collector_from_pdb.calculate_averages_and_stdevs('SER', 'rama')
+#print 'total from shortlist2 and archived shortlist1', statistics_collector_from_pdb.calculate_averages_and_stddevs('SER', 'rama')
 
 
 #################################################################################################
@@ -99,13 +99,13 @@ for filename in FileList:
     pe_instance.loadFile(filename)
     statistics_collector_from_all_pdb.add_pose_energies(pe_instance)
 
-print 'total all pdb', statistics_collector_from_all_pdb.calculate_averages_and_stdevs('SER', 'rama')
+#print 'total all pdb', statistics_collector_from_all_pdb.calculate_averages_and_stddevs('SER', 'rama')
 
 
 error_adding_data_seen = False
 
-all_pdb_result = statistics_collector_from_all_pdb.calculate_averages_and_stdevs('SER', 'rama')
-archive_result = statistics_collector_from_pdb.calculate_averages_and_stdevs('SER', 'rama')
+all_pdb_result = statistics_collector_from_all_pdb.calculate_averages_and_stddevs('SER', 'rama')
+archive_result = statistics_collector_from_pdb.calculate_averages_and_stddevs('SER', 'rama')
 if  round( all_pdb_result[0], 5 )!= round( archive_result[0], 5):
     error_adding_data_seen = True
 

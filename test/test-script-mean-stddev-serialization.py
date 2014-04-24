@@ -31,41 +31,41 @@ statistics_collector.add_pose_energies( pe_instance_2)
 
 
 ########################################################################
-# test: mean and stdev for single .pdb-files
+# test: mean and stddev for single .pdb-files
 
 error1_seen = False
 
 
-if pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm1')[1] != np.std([1,1]) or pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm1')[0] != np.mean([1, 1]):
+if pose_energies.calculate_averages_and_stddevs("GLU", 'faketerm1')[1] != np.std([1,1]) or pose_energies.calculate_averages_and_stddevs("GLU", 'faketerm1')[0] != np.mean([1, 1]):
 	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm2')[1] != np.std([4, 2]) or pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm2')[0] != np.mean([4, 2]):
+elif pose_energies.calculate_averages_and_stddevs("GLU", 'faketerm2')[1] != np.std([4, 2]) or pose_energies.calculate_averages_and_stddevs("GLU", 'faketerm2')[0] != np.mean([4, 2]):
 	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm3')[1] != np.std([6, 5]) or pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm3')[0] != np.mean([6, 5]):
+elif pose_energies.calculate_averages_and_stddevs("GLU", 'faketerm3')[1] != np.std([6, 5]) or pose_energies.calculate_averages_and_stddevs("GLU", 'faketerm3')[0] != np.mean([6, 5]):
 	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm4')[1] != np.std([9, -10]) or pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm4')[0] != np.mean([9, -10]):
-	error1_seen = True
-
-elif pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm1')[1] != np.std([5]) or pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm1')[0] != np.mean([5]):
-	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm2')[1] != np.std([6]) or pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm2')[0] != np.mean([6]):
-	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm3')[1] != np.std([7]) or pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm3')[0] != np.mean([7]):
-	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm4')[1] != np.std([8]) or pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm4')[0] != np.mean([8]):
+elif pose_energies.calculate_averages_and_stddevs("GLU", 'faketerm4')[1] != np.std([9, -10]) or pose_energies.calculate_averages_and_stddevs("GLU", 'faketerm4')[0] != np.mean([9, -10]):
 	error1_seen = True
 
-elif pose_energies.calculate_averages_and_stdevs("MET", 'faketerm1')[1] != np.std([1, 1]) or pose_energies.calculate_averages_and_stdevs("MET", 'faketerm1')[0] != np.mean([1, 1]):
+elif pose_energies.calculate_averages_and_stddevs("ASP", 'faketerm1')[1] != np.std([5]) or pose_energies.calculate_averages_and_stddevs("ASP", 'faketerm1')[0] != np.mean([5]):
 	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("MET", 'faketerm2')[1] != np.std([2, -4]) or pose_energies.calculate_averages_and_stdevs("MET", 'faketerm2')[0] != np.mean([2, -4]):
+elif pose_energies.calculate_averages_and_stddevs("ASP", 'faketerm2')[1] != np.std([6]) or pose_energies.calculate_averages_and_stddevs("ASP", 'faketerm2')[0] != np.mean([6]):
 	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("MET", 'faketerm3')[1] != np.std([3, 6]) or pose_energies.calculate_averages_and_stdevs("MET", 'faketerm3')[0] != np.mean([3, 6]):
+elif pose_energies.calculate_averages_and_stddevs("ASP", 'faketerm3')[1] != np.std([7]) or pose_energies.calculate_averages_and_stddevs("ASP", 'faketerm3')[0] != np.mean([7]):
 	error1_seen = True
-elif pose_energies.calculate_averages_and_stdevs("MET", 'faketerm4')[1] != np.std([4, 2]) or pose_energies.calculate_averages_and_stdevs("MET", 'faketerm4')[0] != np.mean([4, 2]):
+elif pose_energies.calculate_averages_and_stddevs("ASP", 'faketerm4')[1] != np.std([8]) or pose_energies.calculate_averages_and_stddevs("ASP", 'faketerm4')[0] != np.mean([8]):
+	error1_seen = True
+
+elif pose_energies.calculate_averages_and_stddevs("MET", 'faketerm1')[1] != np.std([1, 1]) or pose_energies.calculate_averages_and_stddevs("MET", 'faketerm1')[0] != np.mean([1, 1]):
+	error1_seen = True
+elif pose_energies.calculate_averages_and_stddevs("MET", 'faketerm2')[1] != np.std([2, -4]) or pose_energies.calculate_averages_and_stddevs("MET", 'faketerm2')[0] != np.mean([2, -4]):
+	error1_seen = True
+elif pose_energies.calculate_averages_and_stddevs("MET", 'faketerm3')[1] != np.std([3, 6]) or pose_energies.calculate_averages_and_stddevs("MET", 'faketerm3')[0] != np.mean([3, 6]):
+	error1_seen = True
+elif pose_energies.calculate_averages_and_stddevs("MET", 'faketerm4')[1] != np.std([4, 2]) or pose_energies.calculate_averages_and_stddevs("MET", 'faketerm4')[0] != np.mean([4, 2]):
 	error1_seen = True
 
 
 if not error1_seen:
-	print "No error when calculating mean and stdev for a single .pdb-file"
+	print "No error when calculating mean and stddev for a single .pdb-file"
 else:
 	print "There was an error when calculating mean and standard deviation for a single .pdb-file"
 
@@ -74,22 +74,22 @@ else:
 
 
 ####################################################################
-#test: mean and stdev out of two .pdb-files
+#test: mean and stddev out of two .pdb-files
 
 error2_seen = False
 
 
-if statistics_collector.calculate_averages_and_stdevs("GLU", 'faketerm2')[1] != np.std([0, 0, 5, 6, 6]) or pose_energies.calculate_averages_and_stdevs("GLU", 'faketerm2')[0] != np.mean([0, 0, 5, 6, 6]):
+if statistics_collector.calculate_averages_and_stddevs("GLU", 'faketerm2')[1] != np.std([0, 0, 5, 6, 6]) or pose_energies.calculate_averages_and_stddevs("GLU", 'faketerm2')[0] != np.mean([0, 0, 5, 6, 6]):
 	error1_seen = True
-elif statistics_collector.calculate_averages_and_stdevs("MET", 'faketerm1')[1] != np.std([1, 4, 4]) or pose_energies.calculate_averages_and_stdevs("MET", 'faketerm1')[0] != np.mean([1, 4, 4]):
+elif statistics_collector.calculate_averages_and_stddevs("MET", 'faketerm1')[1] != np.std([1, 4, 4]) or pose_energies.calculate_averages_and_stddevs("MET", 'faketerm1')[0] != np.mean([1, 4, 4]):
 	error1_seen = True
-elif statistics_collector.calculate_averages_and_stdevs("ASP", 'faketerm3')[1] != np.std([7, 6]) or pose_energies.calculate_averages_and_stdevs("ASP", 'faketerm3')[0] != np.mean([7, 6]):
+elif statistics_collector.calculate_averages_and_stddevs("ASP", 'faketerm3')[1] != np.std([7, 6]) or pose_energies.calculate_averages_and_stddevs("ASP", 'faketerm3')[0] != np.mean([7, 6]):
 	error1_seen = True
-elif statistics_collector.calculate_averages_and_stdevs("TRP", 'faketerm4')[1] != 0 or pose_energies.calculate_averages_and_stdevs("TRP", 'faketerm4')[0] != 0:
+elif statistics_collector.calculate_averages_and_stddevs("TRP", 'faketerm4')[1] != 0 or pose_energies.calculate_averages_and_stddevs("TRP", 'faketerm4')[0] != 0:
 	error1_seen = True
 
 if not error2_seen:
-	print "No error when calculating mean and stdev multiple .pdb-files"
+	print "No error when calculating mean and stddev multiple .pdb-files"
 else:
 	print "There was an error when calculating mean and standard deviation for multiple .pdb-files"
 
@@ -123,13 +123,13 @@ for aminoacid in aminoacids:
     #archived_res_type_average_scores[aminoacid] = loaded_object
     f.close()
 
-if not statistics_collector_from_pdb.calculate_averages_and_stdevs('GLU', 'faketerm1') == statistics_collector_from_archive.calculate_averages_and_stdevs('GLU', 'faketerm1'):
+if not statistics_collector_from_pdb.calculate_averages_and_stddevs('GLU', 'faketerm1') == statistics_collector_from_archive.calculate_averages_and_stddevs('GLU', 'faketerm1'):
 	error3_seen = True
-elif not statistics_collector_from_pdb.calculate_averages_and_stdevs('ASP', 'faketerm1') == statistics_collector_from_archive.calculate_averages_and_stdevs('ASP', 'faketerm1'):
+elif not statistics_collector_from_pdb.calculate_averages_and_stddevs('ASP', 'faketerm1') == statistics_collector_from_archive.calculate_averages_and_stddevs('ASP', 'faketerm1'):
 	error3_seen = True
-elif not statistics_collector_from_pdb.calculate_averages_and_stdevs('MET', 'faketerm2') == statistics_collector_from_archive.calculate_averages_and_stdevs('MET', 'faketerm2'):
+elif not statistics_collector_from_pdb.calculate_averages_and_stddevs('MET', 'faketerm2') == statistics_collector_from_archive.calculate_averages_and_stddevs('MET', 'faketerm2'):
 	error3_seen = True
-#elif not statistics_collector_from_pdb.calculate_averages_and_stdevs('ALA', 'faketerm4') == statistics_collector_from_archive.calculate_averages_and_stdevs('ALA', 'faketerm4'):
+#elif not statistics_collector_from_pdb.calculate_averages_and_stddevs('ALA', 'faketerm4') == statistics_collector_from_archive.calculate_averages_and_stddevs('ALA', 'faketerm4'):
 #	error3_seen = True
 
 

@@ -31,6 +31,15 @@ class ResidueEnergies(object):
     def get_value( self, score_term):
         return float(self.score_dict.get(score_term))
 
+    def get_value_for_combined_score_term_plus(self, list_of_scoreterms):
+        return_val = 0.0
+        for score_term in list_of_scoreterms:
+            return_val = return_val + self.get_value(score_term)
+        return return_val
+
+    def get_value_for_combined_score_term_minus(self, minuend, subtrahend):
+        return self.get_value(minuend) - self.get_value(subtrahend)
+
     def get_res_type(self):
        return self.res_type
 
@@ -106,7 +115,8 @@ class PoseEnergies(object):
             all_res_counter += 1
 
 
-    def calculate_averages_and_stdevs(self, res_type, score_term):
+
+    def calculate_averages_and_stddevs(self, res_type, score_term):
         cur_mean = self.restype_av_scores[res_type].get_mean_val(score_term)
         cur_stddev = self.restype_av_scores[res_type].get_stddev(score_term)
         return (cur_mean, cur_stddev)
