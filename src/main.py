@@ -18,7 +18,7 @@ score_term_z = ''
 score_term_minus_z = ''
 score_term_plus_z = ''
 histogram_location = ''
-score_term = 'total'
+
 
 
 #Command Line Arguments
@@ -170,16 +170,17 @@ if score_term_z != '':
     if pdb_file != '' and pdb_file_2 == '':
         print 'z-scores:'
         reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
-        zscores = reference_z_scores.calculate_z_scores(score_term)
+        zscores = reference_z_scores.calculate_z_scores(score_term_z)
         for key in zscores.keys():
             print '\n%s: %s    %s' %(key, zscores[key][1], zscores[key][0])
     elif pdb_file!= '' and pdb_file_2 != '':
-        print 'difference in z scores_'
+        print 'difference in z scores'
         reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
         z_scores_after_modification = ZScoreCalculator(pdb_file_2, statistics_collector_from_archive)
-        delta_z = reference_z_scores.calculate_differences_in_z_scores(z_scores_after_modification, score_term)
+        delta_z = reference_z_scores.calculate_differences_in_z_scores(z_scores_after_modification, score_term_z)
         for i in range(len(delta_z)):
             print '%s   %s   %s' %(delta_z[i][0], delta_z[i][1], delta_z[i][2])
+        print 'position with worst shift: %s (%s) \nposition with best shift: %s (%s)' %(z_scores_after_modification.position_positive_shift, round(z_scores_after_modification.value_pos,4), z_scores_after_modification.position_negative_shift, round(z_scores_after_modification.value_neg,4))
 
 elif score_term_plus_z != '':
     print 'Calculation of z scores for %s' % score_term_plus_z
@@ -195,12 +196,13 @@ elif score_term_plus_z != '':
         for key in zscores.keys():
             print '\n%s: %s    %s' %(key, zscores[key][1], zscores[key][0])
     elif pdb_file!= '' and pdb_file_2 != '':
-        print 'difference in z scores_'
+        print 'difference in z scores'
         reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
         z_scores_after_modification = ZScoreCalculator(pdb_file_2, statistics_collector_from_archive)
         delta_z = reference_z_scores.calculate_differences_in_z_scores_combined_plus(z_scores_after_modification, score_terms)
         for i in range(len(delta_z)):
             print '%s   %s   %s' %(delta_z[i][0], delta_z[i][1], delta_z[i][2])
+        print 'position with worst shift: %s (%s) \nposition with best shift: %s (%s)' %(z_scores_after_modification.position_positive_shift, round(z_scores_after_modification.value_pos,4), z_scores_after_modification.position_negative_shift, round(z_scores_after_modification.value_neg,4))
 
 elif score_term_minus_z != '':
     print 'Calculation of z scores for %s' % score_term_minus_z
@@ -217,9 +219,10 @@ elif score_term_minus_z != '':
         for key in zscores.keys():
             print '\n%s: %s    %s' %(key, zscores[key][1], zscores[key][0])
     elif pdb_file!= '' and pdb_file_2 != '':
-        print 'difference in z scores_'
+        print 'difference in z scores'
         reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
         z_scores_after_modification = ZScoreCalculator(pdb_file_2, statistics_collector_from_archive)
         delta_z = reference_z_scores.calculate_differences_in_z_scores_combined_minus(z_scores_after_modification, minuend, subtrahend)
         for i in range(len(delta_z)):
             print '%s   %s   %s' %(delta_z[i][0], delta_z[i][1], delta_z[i][2])
+        print 'position with worst shift: %s (%s) \nposition with best shift: %s (%s)' %(z_scores_after_modification.position_positive_shift, round(z_scores_after_modification.value_pos,4), z_scores_after_modification.position_negative_shift, round(z_scores_after_modification.value_neg,4))
