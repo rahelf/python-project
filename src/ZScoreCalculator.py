@@ -11,6 +11,10 @@ class ZScoreCalculator(object):
 		self.pe_instance.loadFile(pdbfile)
 		self.statistics_collector = statistics_collector
 		self.z_score_dict = {}
+		self.position_positive_shift = 0
+		self.value_pos = 0
+		self.position_negative_shift = 0
+		self.value_neg = 0
 
 
 	def calculate_z_scores(self, score_term):
@@ -70,11 +74,15 @@ class ZScoreCalculator(object):
 				mutation = '-'
 				if self.z_score_dict[str(res_num)][1] != other_instance.z_score_dict[str(res_num)][1]:
 					mutation = 'mutation'
-				delta_z_scores[str(res_num)] =  (self.z_score_dict[str(res_num)][0] - other_instance.z_score_dict[str(res_num)][0]), mutation
+				delta_z_scores[str(res_num)] =  (other_instance.z_score_dict[str(res_num)][0] - self.z_score_dict[str(res_num)][0]), mutation
 
-		position_with_biggest_shift = max(delta_z_scores, key=delta_z_scores.get)
+		other_instance.position_positive_shift = max(delta_z_scores, key=delta_z_scores.get)
+		other_instance.value_pos = delta_z_scores[other_instance.position_positive_shift][0]
+		other_instance.position_negative_shift = min(delta_z_scores, key=delta_z_scores.get)
+		other_instance.value_neg = delta_z_scores[other_instance.position_negative_shift][0]
 		delta_z_scores_sorted = sorted(delta_z_scores, key=delta_z_scores.get, reverse=True)
-		print 'position with biggest shift: %s\n' %position_with_biggest_shift
+		#print 'position with biggest positive shift(worst): %s\n (shift: %s)' %(other_instance.position_positive_shift, round(other_instance.value_pos, 3) )
+		#print 'position with biggest negative shift (best): %s\n (shift: %s)' %(other_instance.position_negative_shift, round(other_instance.value_neg, 3))
 		result = []
 		for key in delta_z_scores_sorted:
 			result.append([key, round(delta_z_scores[key][0], 4), delta_z_scores[key][1]])
@@ -101,11 +109,15 @@ class ZScoreCalculator(object):
 				mutation = '-'
 				if self.z_score_dict[str(res_num)][1] != other_instance.z_score_dict[str(res_num)][1]:
 					mutation = 'mutation'
-				delta_z_scores[str(res_num)] =  (self.z_score_dict[str(res_num)][0] - other_instance.z_score_dict[str(res_num)][0]), mutation
+				delta_z_scores[str(res_num)] =  (other_instance.z_score_dict[str(res_num)][0] - self.z_score_dict[str(res_num)][0]), mutation
 
-		position_with_biggest_shift = max(delta_z_scores, key=delta_z_scores.get)
+		other_instance.position_positive_shift = max(delta_z_scores, key=delta_z_scores.get)
+		other_instance.value_pos = delta_z_scores[other_instance.position_positive_shift][0]
+		other_instance.position_negative_shift = min(delta_z_scores, key=delta_z_scores.get)
+		other_instance.value_neg = delta_z_scores[other_instance.position_negative_shift][0]
 		delta_z_scores_sorted = sorted(delta_z_scores, key=delta_z_scores.get, reverse=True)
-		print 'position with biggest shift: %s\n' %position_with_biggest_shift
+		#print 'position with biggest positive shift(worst): %s\n (shift: %s)' %(other_instance.position_positive_shift, round(other_instance.value_pos, 3) )
+		#print 'position with biggest negative shift (best): %s\n (shift: %s)' %(other_instance.position_negative_shift, round(other_instance.value_neg, 3))
 		result = []
 		for key in delta_z_scores_sorted:
 			result.append([key, round(delta_z_scores[key][0], 4), delta_z_scores[key][1]])
@@ -130,11 +142,15 @@ class ZScoreCalculator(object):
 				mutation = '-'
 				if self.z_score_dict[str(res_num)][1] != other_instance.z_score_dict[str(res_num)][1]:
 					mutation = 'mutation'
-				delta_z_scores[str(res_num)] =  (self.z_score_dict[str(res_num)][0] - other_instance.z_score_dict[str(res_num)][0]), mutation
+				delta_z_scores[str(res_num)] =  (other_instance.z_score_dict[str(res_num)][0] - self.z_score_dict[str(res_num)][0]), mutation
 
-		position_with_biggest_shift = max(delta_z_scores, key=delta_z_scores.get)
+		other_instance.position_positive_shift = max(delta_z_scores, key=delta_z_scores.get)
+		other_instance.value_pos = delta_z_scores[other_instance.position_positive_shift][0]
+		other_instance.position_negative_shift = min(delta_z_scores, key=delta_z_scores.get)
+		other_instance.value_neg = delta_z_scores[other_instance.position_negative_shift][0]
 		delta_z_scores_sorted = sorted(delta_z_scores, key=delta_z_scores.get, reverse=True)
-		print 'position with biggest shift: %s\n' %position_with_biggest_shift
+		#print 'position with biggest positive shift(worst): %s\n (shift: %s)' %(other_instance.position_positive_shift, round(other_instance.value_pos, 3) )
+		#print 'position with biggest negative shift (best): %s\n (shift: %s)' %(other_instance.position_negative_shift, round(other_instance.value_neg, 3))
 		result = []
 		for key in delta_z_scores_sorted:
 			result.append([key, round(delta_z_scores[key][0], 4), delta_z_scores[key][1]])
