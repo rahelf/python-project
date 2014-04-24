@@ -18,6 +18,8 @@ score_term_z = ''
 score_term_minus_z = ''
 score_term_plus_z = ''
 histogram_location = ''
+goodz = ''
+badz = ''
 
 
 
@@ -43,6 +45,10 @@ for arg in CommandArgs:
         score_term_plus_z = CommandArgs[CommandArgs.index(arg)+1]
     elif arg == '-st-':
         score_term_minus_z = CommandArgs[CommandArgs.index(arg)+1]
+    elif arg == '-goodz':
+        goodz = float(CommandArgs[CommandArgs.index(arg)+1])
+    elif arg == '-badz':
+        badz = float(CommandArgs[CommandArgs.index(arg)+1])
 
 
 #data needed (either from archive or calculated from files)
@@ -115,6 +121,9 @@ for archive in archive_list:
 
 
 #combination of score terms (plus)
+score_terms_to_be_combined = ['fa_atr', 'fa_rep']
+for aminoacid in aminoacids:
+    statistics_collector_from_archive.restype_av_scores[aminoacid].calculate_sum_of_several_score_terms(score_terms_to_be_combined)
 score_terms_to_be_combined = ['hbond_bb_sc', 'hbond_sc']
 for aminoacid in aminoacids:
     statistics_collector_from_archive.restype_av_scores[aminoacid].calculate_sum_of_several_score_terms(score_terms_to_be_combined)
@@ -136,6 +145,15 @@ for aminoacid in aminoacids:
 #best score terms
 #print '\nfrom archive: Best score is %s. \npdb-identfier of file: %s \nresidue number: %s' %statistics_collector_from_archive.restype_av_scores[aminoacid].get_best_score(score_term)
 
+
+'''
+interesting_score_terms = ['total', 'fa_atr', 'hbond_bb_sc']
+for score_term in interesting_score_terms:
+    print '\n', score_term
+    for score_term in interesting_score_terms:
+        print '\n', score_term
+        print '%s best score: %s' % (aminoacid, statistics_collector_from_archive.restype_av_scores[aminoacid].get_best_score(score_term))
+'''
 
 #frequency of aminoacids and neighbor numbers
 #statistics_collector_from_archive.restype_av_scores['GLU'].plot_relative_frequencies_of_numbers_of_neighbors()
@@ -165,8 +183,10 @@ if histogram_location != '' and interesting_score_terms != '':
 #pdb_file = '/home/rahel/uni/wise1314/python/vergl_designs/3b4x_talcstrlx_0001.pdb'
 #pdb_file_2 = '/home/rahel/uni/wise1314/python/vergl_designs/dCM13_talcstrlx_0001.pdb'
 
-if score_term_z != '':
-    print 'Calculation of z scores for %s' % score_term_z
+score_termsz = ['total', 'fa_atr']
+
+for score_term_z in score_termsz:
+    print '\nCalculation of z scores for %s' % score_term_z
     if pdb_file != '' and pdb_file_2 == '':
         print 'z-scores:'
         reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
@@ -181,9 +201,14 @@ if score_term_z != '':
         for i in range(len(delta_z)):
             print '%s   %s   %s' %(delta_z[i][0], delta_z[i][1], delta_z[i][2])
         print 'position with worst shift: %s (%s) \nposition with best shift: %s (%s)' %(z_scores_after_modification.position_positive_shift, round(z_scores_after_modification.value_pos,4), z_scores_after_modification.position_negative_shift, round(z_scores_after_modification.value_neg,4))
+        if goodz != '':
+            z_scores_after_modification.get_goodz(goodz)
+        if badz != '':
+            z_scores_after_modification.get_badz(badz)
 
-elif score_term_plus_z != '':
-    print 'Calculation of z scores for %s' % score_term_plus_z
+score_termsz_plus = ['fa_atr+fa_rep', 'hbond_bb_sc+hbond_sc']
+for score_term_plus_z in score_termsz_plus:
+    print '\nCalculation of z scores for %s' % score_term_plus_z
     #scoreterms trennen am plus
     score_terms = score_term_plus_z.split("+", 1)
     print score_terms
@@ -203,9 +228,14 @@ elif score_term_plus_z != '':
         for i in range(len(delta_z)):
             print '%s   %s   %s' %(delta_z[i][0], delta_z[i][1], delta_z[i][2])
         print 'position with worst shift: %s (%s) \nposition with best shift: %s (%s)' %(z_scores_after_modification.position_positive_shift, round(z_scores_after_modification.value_pos,4), z_scores_after_modification.position_negative_shift, round(z_scores_after_modification.value_neg,4))
+        if goodz != '':
+            z_scores_after_modification.get_goodz(goodz)
+        if badz != '':
+            z_scores_after_modification.get_badz(badz)
 
-elif score_term_minus_z != '':
-    print 'Calculation of z scores for %s' % score_term_minus_z
+score_termsz_minus = ['total-fa_dun']
+for score_term_minus_z in score_termsz_minus:
+    print '\nCalculation of z scores for %s' % score_term_minus_z
     #scoreterms trennen am minus
     score_terms = score_term_minus_z.split("-", 1)
     minuend = score_terms[0]
@@ -226,3 +256,9 @@ elif score_term_minus_z != '':
         for i in range(len(delta_z)):
             print '%s   %s   %s' %(delta_z[i][0], delta_z[i][1], delta_z[i][2])
         print 'position with worst shift: %s (%s) \nposition with best shift: %s (%s)' %(z_scores_after_modification.position_positive_shift, round(z_scores_after_modification.value_pos,4), z_scores_after_modification.position_negative_shift, round(z_scores_after_modification.value_neg,4))
+        if goodz != '':
+            z_scores_after_modification.get_goodz(goodz)
+        if badz != '':
+            z_scores_after_modification.get_badz(badz)
+
+
