@@ -1,3 +1,5 @@
+
+
 max_neighbor_count = 40
 number_of_neighbors_list = range(0,max_neighbor_count+1)
 aminoacids = ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS', 'LEU', 'MET', 'ASN', 'PRO', 'GLN', 'ARG', 'SER', 'THR', 'VAL', 'TRP', 'TYR']
@@ -7,6 +9,7 @@ def combined_score_term_plus(score_terms_to_be_combined):
 
 def combined_score_term_minus(minuend, subtrahend):
 	return '-'.join([minuend, subtrahend])
+
 
 surface_outside = range(0, 11)
 surface_inside = range(0, 14)

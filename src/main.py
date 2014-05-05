@@ -12,11 +12,10 @@ import sys
 
 pdb_listfile = ""
 archive_listfile = ""
+add_arch = False
 pdb_file = ''
 pdb_file_2 = ''
-score_term_z = ''
-score_term_minus_z = ''
-score_term_plus_z = ''
+interesting_score_terms = ''
 histogram_location = ''
 goodz = ''
 badz = ''
@@ -31,6 +30,8 @@ for arg in CommandArgs:
         listmode = 1
     elif arg == '-arch':
         archive_listfile = CommandArgs[CommandArgs.index(arg)+1]
+    elif arg == '-a':
+        add_arch = True
     elif arg == '-pickle':
         pickle_location = CommandArgs[CommandArgs.index(arg)+1]
     elif arg == '-hist':
@@ -40,11 +41,7 @@ for arg in CommandArgs:
     elif arg == '-z2':
         pdb_file_2 = CommandArgs[CommandArgs.index(arg)+1]
     elif arg == '-st':
-        score_term_z = CommandArgs[CommandArgs.index(arg)+1]
-    elif arg == '-st+':
-        score_term_plus_z = CommandArgs[CommandArgs.index(arg)+1]
-    elif arg == '-st-':
-        score_term_minus_z = CommandArgs[CommandArgs.index(arg)+1]
+        interesting_score_terms = CommandArgs[CommandArgs.index(arg)+1].split(",")
     elif arg == '-goodz':
         goodz = float(CommandArgs[CommandArgs.index(arg)+1])
     elif arg == '-badz':
@@ -101,41 +98,31 @@ if FileList:
 
 
 #Serialization
-#for aminoacid in aminoacids:
-#    statistics_collector_from_pdb.restype_av_scores[aminoacid].pickle_res_type_average_scores(pickle_location+aminoacid+'.txt')
+if pickle_location != '':
+    for aminoacid in aminoacids:
+        statistics_collector_from_pdb.restype_av_scores[aminoacid].pickle_res_type_average_scores(pickle_location+aminoacid+'.txt')
 
 
 #deserialize archived files
-for archive in archive_list:
-    f = file(archive, 'rb')
-    statistics_collector_from_archive.add_archived_data( cPickle.load(f) )
-    #print archive
-    f.close()
+if archive_listfile != '' and pdb_listfile == '':
+    if add_arch == True:
+        for archive in archive_list:
+            f = file(archive, 'rb')
+            statistics_collector_from_pdb.add_archived_data( cPickle.load(f) )
+            f.close()
+            statistics_collector_from_archive = statistics_collector_from_pdb
+    elif add_arch ==False:
+        for archive in archive_list:
+            f = file(archive, 'rb')
+            statistics_collector_from_archive.add_archived_data( cPickle.load(f) )
+            f.close()
+
 
 
 #Deserialization of one particular file (faster)
 #aminoacids = ['GLU']
 # = '/home/rahel/uni/wise1314/python/pdbstats/pickle11k/GLU.txt'
 #statistics_collector_from_archive.add_archived_data(cPickle.load(file(archive, 'rb')))
-
-
-
-#combination of score terms (plus)
-score_terms_to_be_combined = ['fa_atr', 'fa_rep']
-for aminoacid in aminoacids:
-    statistics_collector_from_archive.restype_av_scores[aminoacid].calculate_sum_of_several_score_terms(score_terms_to_be_combined)
-score_terms_to_be_combined = ['hbond_bb_sc', 'hbond_sc']
-for aminoacid in aminoacids:
-    statistics_collector_from_archive.restype_av_scores[aminoacid].calculate_sum_of_several_score_terms(score_terms_to_be_combined)
-
-
-
-#subtraction of score_terms ----  important for subtraction of fa_dun from total
-minuend = 'total'
-subtrahend = 'fa_dun'
-for aminoacid in aminoacids:
-    statistics_collector_from_archive.restype_av_scores[aminoacid].subtract_score_terms(minuend, subtrahend)
-
 
 #average and standard deviation
 #print statistics_collector_from_archive.get_mean_and_stddev('SER', 'hbond_bb_sc+hbond_sc', 5)
@@ -144,16 +131,12 @@ for aminoacid in aminoacids:
 
 #best score terms
 #print '\nfrom archive: Best score is %s. \npdb-identfier of file: %s \nresidue number: %s' %statistics_collector_from_archive.restype_av_scores[aminoacid].get_best_score(score_term)
+#for score_term in interesting_score_terms:
+ #   print '\n', score_term
+  #  for score_term in interesting_score_terms:
+   #     print '\n', score_term
+    #    print '%s best score: %s' % (aminoacid, statistics_collector_from_archive.restype_av_scores[aminoacid].get_best_score(score_term))
 
-
-'''
-interesting_score_terms = ['total', 'fa_atr', 'hbond_bb_sc']
-for score_term in interesting_score_terms:
-    print '\n', score_term
-    for score_term in interesting_score_terms:
-        print '\n', score_term
-        print '%s best score: %s' % (aminoacid, statistics_collector_from_archive.restype_av_scores[aminoacid].get_best_score(score_term))
-'''
 
 #frequency of aminoacids and neighbor numbers
 #statistics_collector_from_archive.restype_av_scores['GLU'].plot_relative_frequencies_of_numbers_of_neighbors()
@@ -161,9 +144,6 @@ for score_term in interesting_score_terms:
 #for aminoacid in aminoacids:
 #    statistics_collector_from_archive.restype_av_scores[aminoacid].plot_relative_frequencies_of_numbers_of_neighbors()
 
-
-aminoacids = ['TYR', 'VAL']
-interesting_score_terms = ['fa_dun']
 
 if histogram_location != '' and interesting_score_terms != '':
     for aminoacid in aminoacids:
@@ -178,87 +158,26 @@ if histogram_location != '' and interesting_score_terms != '':
                 number_of_residues = len(statistics_collector_from_archive.restype_av_scores[aminoacid].get_merged_list_for_ncounts(score_term, neighbor_situation))
                 statistics_collector_from_archive.restype_av_scores[aminoacid].make_histogram_for_scoreterm_for_ncounts(score_term, neighbor_situation, number_of_residues, histogram_location, mean, stddev)
 
-
-#Z scores (filenames)
-#pdb_file = '/home/rahel/uni/wise1314/python/vergl_designs/3b4x_talcstrlx_0001.pdb'
-#pdb_file_2 = '/home/rahel/uni/wise1314/python/vergl_designs/dCM13_talcstrlx_0001.pdb'
-
-score_termsz = ['total', 'fa_atr']
-
-for score_term_z in score_termsz:
-    print '\nCalculation of z scores for %s' % score_term_z
-    if pdb_file != '' and pdb_file_2 == '':
-        print 'z-scores:'
-        reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
-        zscores = reference_z_scores.calculate_z_scores(score_term_z)
-        for key in zscores.keys():
-            print '\n%s: %s    %s' %(key, zscores[key][1], zscores[key][0])
-    elif pdb_file!= '' and pdb_file_2 != '':
-        print 'difference in z scores'
-        reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
-        z_scores_after_modification = ZScoreCalculator(pdb_file_2, statistics_collector_from_archive)
-        delta_z = reference_z_scores.calculate_differences_in_z_scores(z_scores_after_modification, score_term_z)
-        for i in range(len(delta_z)):
-            print '%s   %s   %s' %(delta_z[i][0], delta_z[i][1], delta_z[i][2])
-        print 'position with worst shift: %s (%s) \nposition with best shift: %s (%s)' %(z_scores_after_modification.position_positive_shift, round(z_scores_after_modification.value_pos,4), z_scores_after_modification.position_negative_shift, round(z_scores_after_modification.value_neg,4))
-        if goodz != '':
-            z_scores_after_modification.get_goodz(goodz)
-        if badz != '':
-            z_scores_after_modification.get_badz(badz)
-
-score_termsz_plus = ['fa_atr+fa_rep', 'hbond_bb_sc+hbond_sc']
-for score_term_plus_z in score_termsz_plus:
-    print '\nCalculation of z scores for %s' % score_term_plus_z
-    #scoreterms trennen am plus
-    score_terms = score_term_plus_z.split("+", 1)
-    print score_terms
-    for aminoacid in aminoacids:
-        statistics_collector_from_archive.restype_av_scores[aminoacid].calculate_sum_of_several_score_terms(score_terms)
-    if pdb_file != '' and pdb_file_2 == '':
-        print 'z-scores:'
-        reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
-        zscores = reference_z_scores.calculate_z_scores_combined_plus(score_terms)
-        for key in zscores.keys():
-            print '\n%s: %s    %s' %(key, zscores[key][1], zscores[key][0])
-    elif pdb_file!= '' and pdb_file_2 != '':
-        print 'difference in z scores'
-        reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
-        z_scores_after_modification = ZScoreCalculator(pdb_file_2, statistics_collector_from_archive)
-        delta_z = reference_z_scores.calculate_differences_in_z_scores_combined_plus(z_scores_after_modification, score_terms)
-        for i in range(len(delta_z)):
-            print '%s   %s   %s' %(delta_z[i][0], delta_z[i][1], delta_z[i][2])
-        print 'position with worst shift: %s (%s) \nposition with best shift: %s (%s)' %(z_scores_after_modification.position_positive_shift, round(z_scores_after_modification.value_pos,4), z_scores_after_modification.position_negative_shift, round(z_scores_after_modification.value_neg,4))
-        if goodz != '':
-            z_scores_after_modification.get_goodz(goodz)
-        if badz != '':
-            z_scores_after_modification.get_badz(badz)
-
-score_termsz_minus = ['total-fa_dun']
-for score_term_minus_z in score_termsz_minus:
-    print '\nCalculation of z scores for %s' % score_term_minus_z
-    #scoreterms trennen am minus
-    score_terms = score_term_minus_z.split("-", 1)
-    minuend = score_terms[0]
-    subtrahend = score_terms[1]
-    for aminoacid in aminoacids:
-        statistics_collector_from_archive.restype_av_scores[aminoacid].subtract_score_terms(minuend, subtrahend)
-    if pdb_file != '' and pdb_file_2 == '':
-        print 'z-scores:'
-        reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
-        zscores = reference_z_scores.calculate_z_scores_combined_minus(minuend, subtrahend)
-        for key in zscores.keys():
-            print '\n%s: %s    %s' %(key, zscores[key][1], zscores[key][0])
-    elif pdb_file!= '' and pdb_file_2 != '':
-        print 'difference in z scores'
-        reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
-        z_scores_after_modification = ZScoreCalculator(pdb_file_2, statistics_collector_from_archive)
-        delta_z = reference_z_scores.calculate_differences_in_z_scores_combined_minus(z_scores_after_modification, minuend, subtrahend)
-        for i in range(len(delta_z)):
-            print '%s   %s   %s' %(delta_z[i][0], delta_z[i][1], delta_z[i][2])
-        print 'position with worst shift: %s (%s) \nposition with best shift: %s (%s)' %(z_scores_after_modification.position_positive_shift, round(z_scores_after_modification.value_pos,4), z_scores_after_modification.position_negative_shift, round(z_scores_after_modification.value_neg,4))
-        if goodz != '':
-            z_scores_after_modification.get_goodz(goodz)
-        if badz != '':
-            z_scores_after_modification.get_badz(badz)
-
-
+if not (pdb_file == '' and pdb_file_2 == ''):
+    for score_term_z in interesting_score_terms:
+        print '\n---------Calculation of z scores for %s-------------------------' % score_term_z
+        if '+' in score_term_z or '-' in score_term_z:
+            statistics_collector_from_archive.calculate_combined_score_terms(score_term_z)
+        if pdb_file != '' and pdb_file_2 == '':
+            print 'z-scores:'
+            reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
+            zscores = reference_z_scores.calculate_z_scores(score_term_z)
+            for i in reference_z_scores.z_sorted:
+                print i
+        elif pdb_file!= '' and pdb_file_2 != '':
+            print 'difference in z scores'
+            reference_z_scores = ZScoreCalculator(pdb_file, statistics_collector_from_archive)
+            z_scores_after_modification = ZScoreCalculator(pdb_file_2, statistics_collector_from_archive)
+            delta_z = reference_z_scores.calculate_differences_in_z_scores(z_scores_after_modification, score_term_z)
+            for i in range(len(delta_z)):
+                print '%s   %s   %s' %(delta_z[i][0], delta_z[i][1], delta_z[i][2])
+            print 'position with worst shift: %s (%s) \nposition with best shift: %s (%s)' %(z_scores_after_modification.position_positive_shift, round(z_scores_after_modification.value_pos,4), z_scores_after_modification.position_negative_shift, round(z_scores_after_modification.value_neg,4))
+            if goodz != '':
+                z_scores_after_modification.get_goodz(goodz)
+            if badz != '':
+                z_scores_after_modification.get_badz(badz)

@@ -144,7 +144,7 @@ class ResTypeAverageScores(object):
         if bins == 0:
             bins = 80
         plt.hist( data, bins, range=[minx, maxx], label=score_term, histtype='stepfilled', normed = True, color = 'g')
-        plt.ylim(0, 4)
+        plt.ylim(0, 0.45)
         plt.xlim(-10,10)
         plt.annotate('number of residues: %s \nmean: %s \nstddev: %s' %(number_of_residues, round(mean, 4), round(stddev, 4)), xy=(0.60, 0.85), xycoords='axes fraction')
         plt.xticks(range(-10,11,2))

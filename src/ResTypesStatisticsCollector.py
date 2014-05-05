@@ -49,3 +49,14 @@ class ResTypesStatisticsCollector(object):
 		self.restype_av_scores[this_aa].add_other_instance(archived_res_type_average_scores)
 		self.mean_stddev_dict = {}
 
+
+
+	def calculate_combined_score_terms(self, score_term):
+		if '+' in score_term:
+			score_terms_to_be_combined = score_term.split("+")
+			for aminoacid in aminoacids:
+				self.restype_av_scores[aminoacid].calculate_sum_of_several_score_terms(score_terms_to_be_combined)
+		elif '-' in score_term:
+			score_terms = score_term.split('-')
+			for aminoacid in aminoacids:
+				self.restype_av_scores[aminoacid].subtract_score_terms(score_terms[0], score_terms[1])
